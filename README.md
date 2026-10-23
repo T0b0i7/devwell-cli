@@ -1,80 +1,131 @@
 # Devwell
 
-**Healthy repos, happier devs.** Quatre outils pour documenter un projet, contrôler sa configuration et garder ses branches propres — avec des actions prudentes par défaut.
+**Des projets sains, des développeurs sereins.** Devwell rassemble quatre commandes locales pour mieux documenter un dépôt, vérifier sa configuration et garder ses branches sous contrôle.
 
-**Site web :** [devwell-vert.vercel.app](https://devwell-vert.vercel.app/) · **Code source :** [T0b0i7/devwell-cli](https://github.com/T0b0i7/devwell-cli)
+[Site web](https://devwell-vert.vercel.app/) · [Code source](https://github.com/T0b0i7/devwell-cli) · [Signaler un problème](https://github.com/T0b0i7/devwell-cli/issues)
 
 ## Démarrage rapide
 
 ```sh
-npm install --global .
+npm install --global devwell
+cd mon-projet
 devwell --help
 ```
 
-Devwell s'installe depuis le dépôt local. Le package npm n'est pas encore publié.
+Devwell s'exécute localement dans le dépôt courant. Commence par les commandes de diagnostic et les modes aperçu ; les opérations qui écrivent ou suppriment demandent une option explicite.
 
-## Les outils
+## Les quatre commandes
 
-| Sous-commande | À quoi elle sert | Exemple |
+| Commande | Ce qu'elle vérifie ou produit | Exemple prudent |
 | --- | --- | --- |
-| `devwell readme` | Génère un changelog depuis les commits Git conventionnels. | `devwell readme --dry-run` |
-| `devwell env` | Compare les fichiers `.env` et repère les clés manquantes ou certains motifs de secrets sans afficher leurs valeurs. | `devwell env --files .env.example,.env --json` |
-| `devwell doctor` | Évalue la configuration de projets Node.js ou Python et produit un rapport exploitable en CI. | `devwell doctor --json` |
-| `devwell branches` | Repère les branches locales candidates au nettoyage et permet une suppression explicite. | `devwell branches --json` |
+| `devwell env` | Compare des fichiers `.env`, signale les clés manquantes, orphelines, vides ou dupliquées, et repère certains motifs de secrets. Les valeurs ne sont pas affichées. | `devwell env --files .env.example,.env` |
+| `devwell doctor` | Évalue certains aspects de santé d'un projet Node.js ou Python : runtime, configurations, lockfile, scripts et hygiène du dépôt. | `devwell doctor --offline` |
+| `devwell branches` | Audite les branches Git locales et présente les candidates selon leur état. Le mode aperçu est activé par défaut. | `devwell branches --stale 30 --graph` |
+| `devwell readme` | Prépare un changelog à partir des commits conventionnels ; peut aussi vérifier les commits ou créer un README minimal absent. | `devwell readme --dry-run` |
 
-Chaque sous-commande propose `--help` et `--version`. Les rapports JSON peuvent être demandés avec `--json` ou `--format json`. Les anciens exécutables `readme-gen`, `env-doctor`, `project-doctor` et `branch-cleaner` restent disponibles comme alias.
-
-## Sécurité et limites
-
-- `devwell env` n'affiche jamais les valeurs des variables d'environnement.
-- `devwell branches` simule les suppressions par défaut, protège la branche courante et les branches usuelles, et exige une double confirmation interactive pour supprimer une branche non fusionnée.
-- `devwell doctor` n'applique aucune correction sans demande explicite. Les modifications qu'il prend en charge sont ciblées et sauvegardées.
-- Ces outils ne remplacent pas une revue de sécurité, un gestionnaire de secrets ou une politique de sauvegarde.
-- Ils s'exécutent localement dans le terminal ; le site web les documente, mais ne les exécute pas sur l'ordinateur du visiteur.
-
-## Prérequis
-
-- Node.js 18.17 ou plus récent pour les commandes.
-- Git pour `devwell readme` et `devwell branches`.
-- Python pour la détection du runtime Python par `devwell doctor`.
-- Node.js 20.19 ou plus récent pour construire ou lancer le site Vite.
-
-## Installation
-
-### Depuis le dépôt
+Pour les options, les formats et les codes de sortie :
 
 ```sh
-npm install --global .
+devwell env --help
+devwell doctor --help
+devwell branches --help
+devwell readme --help
 ```
 
-Les quatre commandes sont alors disponibles dans le terminal. Pour les désinstaller :
+Les anciens binaires restent disponibles : `env-doctor`, `project-doctor`, `branch-cleaner` et `readme-gen`.
+
+## Rapports et automatisation
+
+Les commandes qui produisent un rapport prennent en charge JSON pour les scripts et les pipelines :
+
+```sh
+devwell env --ci --json
+devwell doctor --ci --min-score 80
+devwell branches --dry-run --json
+devwell readme --dry-run --json --output -
+```
+
+`devwell doctor` fonctionne hors ligne par défaut ; `--offline` rend ce choix explicite. Vérifie le code de sortie de chaque commande dans ta CI et ajuste ses seuils à ton projet avant d'en faire un contrôle bloquant.
+
+## Sécurité et comportement
+
+- Les commandes s'exécutent sur ta machine ; le site web présente la suite, mais n'analyse pas tes dépôts.
+- `devwell env` ne révèle pas les valeurs des variables.
+- `devwell doctor` n'applique aucune correction sans `--fix --apply`.
+- `devwell branches` simule le nettoyage par défaut. `--apply` cible les candidates fusionnées ; les branches non fusionnées nécessitent `--force-unmerged` et une confirmation interactive.
+- Aucun outil ne remplace une revue de code, un gestionnaire de secrets, une sauvegarde ou une politique de sécurité.
+
+## Feuille de route
+
+Cette liste rassemble des pistes de travail, pas des engagements ni des dates de livraison. Les priorités pourront évoluer selon les retours et les besoins des utilisateurs.
+
+### Fondations — à consolider
+
+- [ ] Ajouter des tests de cas limites supplémentaires : dépôts vides, Git absent, fichiers `.env` mal formés et chemins avec espaces.
+- [ ] Tester systématiquement l'installation et les commandes publiées sur Windows, macOS et Linux.
+- [ ] Documenter clairement les codes de sortie, les formats JSON et les scénarios de panne de chaque commande.
+- [ ] Vérifier que chaque exemple du site et du README correspond au comportement réel de la version publiée.
+
+### Expérience en ligne de commande — pistes
+
+- [ ] Harmoniser les options communes, les messages d'erreur et les conseils de correction.
+- [ ] Améliorer les résumés de fin pour indiquer ce qui a été vérifié et la prochaine action utile.
+- [ ] Étudier des options globales telles que `--quiet`, `--verbose` et `--no-color`, si elles améliorent les usages en terminal et en CI.
+- [ ] Évaluer une configuration partagée facultative pour éviter de répéter les mêmes réglages dans plusieurs commandes.
+
+### Outils — pistes
+
+- [ ] `env` : rendre les règles d'ignorance et les faux positifs plus faciles à comprendre et à ajuster.
+- [ ] `doctor` : préciser les limites du score, élargir les vérifications utiles et rendre chaque correction proposée vérifiable.
+- [ ] `branches` : améliorer les explications sur le statut de chaque branche et les garde-fous avant toute suppression.
+- [ ] `readme` : couvrir davantage de conventions de commits et faciliter la prévisualisation avant écriture.
+
+### Adoption et documentation — pistes
+
+- [ ] Ajouter des démonstrations terminal reproductibles pour les quatre commandes.
+- [ ] Enrichir les exemples d'intégration dans GitHub Actions et d'autres environnements CI.
+- [ ] Recueillir les retours d'utilisateurs avant d'ajouter de nouvelles plateformes ou de nouveaux gestionnaires de paquets.
+
+## Installation et désinstallation
+
+### Depuis npm
+
+```sh
+npm install --global devwell
+devwell --version
+```
+
+Pour désinstaller :
 
 ```sh
 npm uninstall --global devwell
 ```
 
-Pour développer le site, installer les dépendances du workspace avec `npm install`, puis lancer `npm run dev`. `npm run build` génère le site statique.
-
-### Créer une archive installable
-
-Depuis la racine du dépôt :
+### Depuis le dépôt
 
 ```sh
-npm pack
+git clone https://github.com/T0b0i7/devwell-cli.git
+cd devwell-cli
+npm install --global .
 ```
 
-Le fichier `devwell-0.1.0.tgz` peut être installé globalement depuis son emplacement :
+Pour contribuer au site ou au code :
 
 ```sh
-npm install --global .\devwell-0.1.0.tgz
+npm install
+npm run dev
 ```
 
-Cette archive contient les exécutables CLI et leur noyau partagé, pas le code du site ni ses dépendances de développement.
+## Prérequis
+
+- Node.js 18.17 ou plus récent pour les commandes.
+- Git pour `devwell readme` et `devwell branches`.
+- Python installé si tu analyses des projets Python avec `devwell doctor`.
+- Node.js 20.19 ou plus récent pour construire et développer le site.
 
 ## Développement et validation
 
 ```sh
-npm install
 npm run check
 npm audit
 ```
@@ -83,14 +134,10 @@ npm audit
 
 ## Contribuer
 
-Les contributions sont les bienvenues. Consulte [CONTRIBUTING.md](./CONTRIBUTING.md) pour lancer les vérifications et proposer un changement ; consulte [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) pour les attentes de la communauté.
+Les contributions et retours sont les bienvenus. Consulte [CONTRIBUTING.md](./CONTRIBUTING.md) avant de proposer un changement et le [code de conduite](./CODE_OF_CONDUCT.md) pour les règles de la communauté.
 
-Pour signaler une vulnérabilité, suis les instructions de [SECURITY.md](./SECURITY.md) et évite de publier les détails avant qu'une correction soit disponible.
+Pour signaler une vulnérabilité, suis les consignes de [SECURITY.md](./SECURITY.md) plutôt que de publier des détails sensibles dans une issue publique.
 
 ## Licence
 
-Ce projet est distribué sous licence MIT. Voir [LICENSE](./LICENSE).
-
-## Publication
-
-Le site est hébergé gratuitement sur Vercel. Le package CLI n'est pas encore publié sur npm : la publication attend une autorisation 2FA ou un jeton npm de publication adapté.
+Devwell est distribué sous licence MIT. Voir [LICENSE](./LICENSE).
