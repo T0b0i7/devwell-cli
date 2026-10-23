@@ -1,0 +1,16 @@
+{
+  "name": "@devwell/project-doctor",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Audite la configuration et l'hygiène de projets Node.js et Python.",
+  "type": "module",
+  "bin": {
+    "project-doctor": "./src/cli.js"
+  },
+  "engines": {
+    "node": ">=18.17"
+  },
+  "dependencies": {
+    "@devwell/core": "*"
+  }
+}

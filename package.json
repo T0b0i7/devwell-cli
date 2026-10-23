@@ -1,0 +1,74 @@
+{
+  "name": "devwell",
+  "version": "0.1.0",
+  "description": "Healthy projects, happier developers. Four practical repository maintenance commands.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/T0b0i7/devwell-cli.git"
+  },
+  "homepage": "https://devwell-vert.vercel.app/",
+  "bugs": {
+    "url": "https://github.com/T0b0i7/devwell-cli/issues"
+  },
+  "license": "MIT",
+  "keywords": [
+    "cli",
+    "developer-tools",
+    "project-maintenance",
+    "dotenv",
+    "git",
+    "nodejs",
+    "project-health"
+  ],
+  "type": "module",
+  "engines": {
+    "node": ">=18.17"
+  },
+  "bin": {
+    "devwell": "./packages/devwell/src/cli.js",
+    "readme-gen": "./packages/readme-gen/src/cli.js",
+    "env-doctor": "./packages/env-doctor/src/cli.js",
+    "project-doctor": "./packages/project-doctor/src/cli.js",
+    "branch-cleaner": "./packages/branch-cleaner/src/cli.js"
+  },
+  "files": [
+    "LICENSE",
+    "README.md",
+    "packages/*/src/**",
+    "packages/core/src/**"
+  ],
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node --test",
+    "typecheck": "tsc --noEmit",
+    "check": "npm test && npm run typecheck && npm run build",
+    "cli:devwell": "node packages/devwell/src/cli.js",
+    "cli:readme-gen": "node packages/readme-gen/src/cli.js",
+    "cli:env-doctor": "node packages/env-doctor/src/cli.js",
+    "cli:project-doctor": "node packages/project-doctor/src/cli.js",
+    "cli:branch-cleaner": "node packages/branch-cleaner/src/cli.js"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "4.1.17",
+    "@types/node": "22.19.17",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "5.1.1",
+    "clsx": "2.1.1",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "tailwind-merge": "3.4.0",
+    "tailwindcss": "4.1.17",
+    "typescript": "5.9.3",
+    "vite": "7.3.7",
+    "vite-plugin-singlefile": "2.3.4"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "@devwell/readme-gen",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Génère un changelog lisible depuis les commits Git conventionnels.",
+  "type": "module",
+  "bin": {
+    "readme-gen": "./src/cli.js"
+  },
+  "engines": {
+    "node": ">=18.17"
+  },
+  "dependencies": {
+    "@devwell/core": "*"
+  }
+}

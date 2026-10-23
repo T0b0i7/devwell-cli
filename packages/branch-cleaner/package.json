@@ -1,0 +1,16 @@
+{
+  "name": "@devwell/branch-cleaner",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Audite les branches Git et propose leur suppression sans risque par défaut.",
+  "type": "module",
+  "bin": {
+    "branch-cleaner": "./src/cli.js"
+  },
+  "engines": {
+    "node": ">=18.17"
+  },
+  "dependencies": {
+    "@devwell/core": "*"
+  }
+}

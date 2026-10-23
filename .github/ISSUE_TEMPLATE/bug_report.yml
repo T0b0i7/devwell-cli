@@ -1,0 +1,46 @@
+name: Rapport de bug
+description: Signaler un problème reproductible dans le site ou un outil CLI.
+title: "[Bug] "
+body:
+  - type: markdown
+    attributes:
+      value: "Pour une vulnérabilité, ne crée pas d'issue publique. Consulte SECURITY.md."
+  - type: input
+    id: command
+    attributes:
+      label: Commande ou page concernée
+      placeholder: "env-doctor --json"
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version de Node.js et du projet
+      placeholder: "Node.js 22.x, Atelier 0.1.0"
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Étapes pour reproduire
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Résultat attendu
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Résultat observé
+    validations:
+      required: true
+  - type: checkboxes
+    id: safe-data
+    attributes:
+      label: Vérification des données
+      options:
+        - label: J'ai retiré les secrets, tokens et données privées du rapport.
+          required: true

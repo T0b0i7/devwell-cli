@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.vercel/
+dev.log
+tmp_hp.txt
+*.tgz
+.env*
+!.env.example

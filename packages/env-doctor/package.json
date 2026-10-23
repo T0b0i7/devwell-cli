@@ -1,0 +1,16 @@
+{
+  "name": "@devwell/env-doctor",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Compare les fichiers .env sans exposer les valeurs sensibles.",
+  "type": "module",
+  "bin": {
+    "env-doctor": "./src/cli.js"
+  },
+  "engines": {
+    "node": ">=18.17"
+  },
+  "dependencies": {
+    "@devwell/core": "*"
+  }
+}

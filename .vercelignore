@@ -1,0 +1,9 @@
+.git/
+node_modules/
+.vercel/
+dist/
+.env
+.env.*
+dev.log
+tmp_hp.txt
+*.tgz
