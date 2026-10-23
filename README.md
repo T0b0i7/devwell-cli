@@ -93,4 +93,4 @@ Ce projet est distribué sous licence MIT. Voir [LICENSE](./LICENSE).
 
 ## Publication
 
-Le site est hébergé gratuitement sur Vercel. Le package CLI n'est pas encore publié sur npm ; vérifier que le nom est toujours disponible et que la session npm est authentifiée avant de publier. Examiner le contenu avec `npm pack --dry-run` avant toute publication.
+Le site est hébergé gratuitement sur Vercel. Le package CLI n'est pas encore publié sur npm : la publication attend une autorisation 2FA ou un jeton npm de publication adapté.

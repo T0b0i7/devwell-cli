@@ -4,7 +4,7 @@
   "description": "Healthy projects, happier developers. Four practical repository maintenance commands.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/T0b0i7/devwell-cli.git"
+    "url": "git+https://github.com/T0b0i7/devwell-cli.git"
   },
   "homepage": "https://devwell-vert.vercel.app/",
   "bugs": {
@@ -25,11 +25,11 @@
     "node": ">=18.17"
   },
   "bin": {
-    "devwell": "./packages/devwell/src/cli.js",
-    "readme-gen": "./packages/readme-gen/src/cli.js",
-    "env-doctor": "./packages/env-doctor/src/cli.js",
-    "project-doctor": "./packages/project-doctor/src/cli.js",
-    "branch-cleaner": "./packages/branch-cleaner/src/cli.js"
+    "devwell": "packages/devwell/src/cli.js",
+    "readme-gen": "packages/readme-gen/src/cli.js",
+    "env-doctor": "packages/env-doctor/src/cli.js",
+    "project-doctor": "packages/project-doctor/src/cli.js",
+    "branch-cleaner": "packages/branch-cleaner/src/cli.js"
   },
   "files": [
     "LICENSE",
