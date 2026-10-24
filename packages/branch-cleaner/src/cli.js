@@ -12,7 +12,7 @@ import {
   writeJson,
 } from "../../core/src/index.js";
 
-const VERSION = "0.1.0";
+const VERSION = "0.1.1";
 const HELP = `branch-cleaner — Audite et nettoie les branches locales Git
 
 USAGE
@@ -133,10 +133,21 @@ function formatPretty(report) {
     const date = branch.lastCommit ? `${branch.ageDays} j` : "inconnue";
     lines.push(`${branch.name.padEnd(32)}${state.padEnd(23)}${date}`);
   }
-  lines.push("", `${report.candidates.length} candidate(s) sûre(s)`);
-  if (report.dryRun) lines.push("Simulation : rien n'a été supprimé. Relancez avec --apply pour confirmer.");
   if (report.deleted.length) lines.push(`Branches supprimées : ${report.deleted.join(", ")}`);
   if (report.failures.length) lines.push(...report.failures.map((failure) => `Échec ${failure.branch} : ${failure.message}`));
+  lines.push("", "RÉSUMÉ");
+  lines.push(`${report.branches.length} branche(s) examinée(s), ${report.candidates.length} candidate(s), ${report.deleted.length} supprimée(s), ${report.failures.length} échec(s).`);
+  if (report.failures.length) {
+    lines.push("Action recommandée : examinez les échecs ci-dessus et vérifiez l'état du dépôt.");
+  } else if (report.dryRun && report.candidates.length) {
+    lines.push("Simulation : rien n'a été supprimé. Relancez avec --apply pour supprimer les candidates fusionnées ; les branches non fusionnées restent intactes.");
+  } else if (!report.candidates.length) {
+    lines.push("Action recommandée : aucune branche candidate, aucune action nécessaire.");
+  } else if (report.candidates.length > report.deleted.length) {
+    lines.push("Action recommandée : les candidates non fusionnées restent intactes ; --force-unmerged exige une double confirmation interactive.");
+  } else if (report.deleted.length) {
+    lines.push("Action recommandée : vérifiez que les branches supprimées ne sont plus nécessaires.");
+  }
   if (report.graph) lines.push("", "HISTORIQUE", report.graph);
   return `${lines.join("\n")}\n`;
 }
@@ -163,7 +174,10 @@ async function main(argv) {
 
   const cwd = process.cwd();
   if (options.fetch) await git(cwd, ["fetch", "--prune", "--quiet"]);
-  const current = await git(cwd, ["symbolic-ref", "--quiet", "--short", "HEAD"]).catch(() => null);
+  const current = await git(cwd, ["symbolic-ref", "--quiet", "--short", "HEAD"]).catch((error) => {
+    if (error instanceof CliError && /not a symbolic ref/i.test(error.message)) return null;
+    throw error;
+  });
   if (!current && options.apply) throw new CliError("HEAD détachée : refus de modifier les branches dans cet état", 1);
   let base = options.base;
   if (!base) {
@@ -177,7 +191,12 @@ async function main(argv) {
   }
   base ??= current;
   if (!base) throw new CliError("Impossible de déterminer une branche de comparaison; utilisez --base", 1);
-  await git(cwd, ["rev-parse", "--verify", `${base}^{commit}`]);
+  try {
+    await git(cwd, ["rev-parse", "--verify", `${base}^{commit}`]);
+  } catch (error) {
+    if (!(error instanceof CliError)) throw error;
+    throw new CliError(`Référence de base "${base}" introuvable. Vérifiez --base et assurez-vous que le dépôt contient au moins un commit.`, 1);
+  }
   const patterns = [...DEFAULT_PROTECTED, ...options.protect.flatMap((group) => group.split(",").filter(Boolean))];
   const branches = await getBranches(cwd, current, base);
   const candidates = auditBranches(branches, { current, patterns, includeMerged: options.merged, staleDays });

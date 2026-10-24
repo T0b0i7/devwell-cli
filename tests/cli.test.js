@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -22,12 +22,21 @@ async function fixture(prefix) {
   return mkdtemp(join(tmpdir(), prefix));
 }
 
-function command(name, args, cwd, { allowFailure = false } = {}) {
+function command(name, args, cwd, { allowFailure = false, env } = {}) {
+  const childEnv = { ...process.env };
+  if (env) {
+    for (const [key, value] of Object.entries(env)) {
+      const existingKey = Object.keys(childEnv).find((name) => name.toLowerCase() === key.toLowerCase());
+      if (existingKey) delete childEnv[existingKey];
+      childEnv[key] = value;
+    }
+  }
   const result = spawnSync(process.execPath, [commands[name], ...args], {
     cwd,
     encoding: "utf8",
     timeout: 15_000,
     windowsHide: true,
+    env: childEnv,
   });
   if (result.error) throw result.error;
   if (!allowFailure && result.status !== 0) {
@@ -48,13 +57,16 @@ test("devwell dispatches subcommands and preserves legacy command aliases", asyn
 
   const help = command("devwell", ["--help"], cwd);
   assert.match(help.stdout, /devwell env --help/);
-  const report = command("devwell", ["env", "--json"], cwd);
+  const report = command("devwell", ["env", "--files", ".env.example,.env", "--ci", "--json"], cwd);
   assert.deepEqual(JSON.parse(report.stdout).summary, { errors: 0, warnings: 0 });
+  const pretty = command("env-doctor", [], cwd);
+  assert.match(pretty.stdout, /RÉSUMÉ/);
+  assert.match(pretty.stdout, /configuration est cohérente/);
 
   const legacy = command("env-doctor", ["--json"], cwd);
   assert.deepEqual(JSON.parse(legacy.stdout).summary, { errors: 0, warnings: 0 });
   const version = command("devwell", ["--version"], cwd);
-  assert.equal(version.stdout.trim(), "0.1.0");
+  assert.equal(version.stdout.trim(), "0.1.1");
 });
 
 async function gitFixture() {
@@ -84,7 +96,9 @@ test("readme-gen generates JSON and writes safely without overwriting by default
   await writeFile(join(cwd, "file.txt"), "next\n");
   git(cwd, "commit", "-qam", "fix(core): keep old files safe");
 
-  const dryRun = command("readme-gen", ["--json", "--dry-run"], cwd);
+  const check = command("readme-gen", ["--check"], cwd);
+  assert.match(check.stdout, /Historique valide : 2 commit\(s\) vérifié\(s\)/);
+  const dryRun = command("devwell", ["readme", "--dry-run", "--json", "--output", "-"], cwd);
   const report = JSON.parse(dryRun.stdout);
   assert.equal(report.versions[0].commits[0].type, "fix");
   assert.equal(await readFile(join(cwd, "CHANGELOG.md"), "utf8").catch(() => null), null);
@@ -112,6 +126,45 @@ test("env-doctor reports missing keys and secret patterns without revealing valu
   assert.deepEqual(parseEnv("export A='one'\r\nA=two\n").duplicates, ["A"]);
 });
 
+test("env-doctor reports malformed lines without echoing their contents", async (t) => {
+  const cwd = await fixture("devwell-env-malformed-");
+  t.after(() => rm(cwd, { recursive: true, force: true }));
+  await writeFile(join(cwd, ".env.example"), "APP_KEY=\nmalformed reference content\n");
+  await writeFile(join(cwd, ".env"), "APP_KEY=local\nmalformed target content\n");
+
+  const result = command("env-doctor", ["--json"], cwd, { allowFailure: true });
+  assert.equal(result.status, 1);
+  const report = JSON.parse(result.stdout);
+  assert.equal(report.issues.filter((issue) => issue.code === "ENV_LINE_MALFORMED").length, 2);
+  assert.ok(!result.stdout.includes("malformed reference content"));
+  assert.ok(!result.stdout.includes("malformed target content"));
+  assert.deepEqual(parseEnv("GOOD=value\nnot a valid assignment\n").malformed, [{ line: 2 }]);
+});
+
+test("env-doctor accepts environment file paths containing spaces", async (t) => {
+  const cwd = await fixture("devwell-env-spaces-");
+  const folder = join(cwd, "config files");
+  t.after(() => rm(cwd, { recursive: true, force: true }));
+  await mkdir(folder);
+  const reference = join(folder, ".env.example");
+  const target = join(folder, ".env");
+  await writeFile(reference, "APP_KEY=\n");
+  await writeFile(target, "APP_KEY=local\n");
+
+  const result = command("env-doctor", [reference, target, "--json"], cwd);
+  const files = JSON.parse(result.stdout).files.map((file) => file.replaceAll("\\", "/"));
+  assert.deepEqual(files, ["config files/.env.example", "config files/.env"]);
+});
+
+test("env-doctor explains how to proceed when no environment files are found", async (t) => {
+  const cwd = await fixture("devwell-empty-env-");
+  t.after(() => rm(cwd, { recursive: true, force: true }));
+  const result = command("env-doctor", [], cwd);
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /L'analyse n'a pas été effectuée/);
+  assert.match(result.stdout, /--files/);
+});
+
 test("project-doctor scores a healthy Node project and creates an escaped HTML report", async (t) => {
   const cwd = await fixture("atelier-project-");
   t.after(() => rm(cwd, { recursive: true, force: true }));
@@ -125,9 +178,14 @@ test("project-doctor scores a healthy Node project and creates an escaped HTML r
   await writeFile(join(cwd, "LICENSE"), "MIT\n");
   await writeFile(join(cwd, ".gitignore"), "node_modules\n");
   const result = command("project-doctor", [
-    "--ci", "--json", "--min-score", "100", "--report", "reports/health.html",
+    "--offline", "--ci", "--json", "--min-score", "100", "--report", "reports/health.html",
   ], cwd);
   assert.equal(JSON.parse(result.stdout).score, 100);
+  const documentedExample = command("devwell", ["doctor", "--offline", "--min-score", "0"], cwd);
+  assert.match(documentedExample.stdout, /Santé du projet/);
+  const pretty = command("project-doctor", ["--min-score", "0"], cwd);
+  assert.match(pretty.stdout, /RÉSUMÉ/);
+  assert.match(pretty.stdout, /configuration est cohérente/);
   const html = await readFile(join(cwd, "reports/health.html"), "utf8");
   assert.ok(html.includes("&lt;safe-project&gt;"));
   assert.ok(!html.includes("<safe-project>"));
@@ -146,6 +204,14 @@ test("project-doctor only applies its explicit allowlisted fix with a backup", a
   const updated = JSON.parse(await readFile(join(cwd, "package.json"), "utf8"));
   assert.equal(updated.engines.node, ">=20");
   assert.ok(await readFile(join(cwd, "package.json.bak"), "utf8"));
+});
+
+test("project-doctor returns a setup error when no supported manifest exists", async (t) => {
+  const cwd = await fixture("devwell-unsupported-project-");
+  t.after(() => rm(cwd, { recursive: true, force: true }));
+  const result = command("project-doctor", [], cwd, { allowFailure: true });
+  assert.equal(result.status, 2);
+  assert.match(result.stderr, /Aucun package\.json ni pyproject\.toml/);
 });
 
 test("branch-cleaner dry-run preserves merged refs; --apply deletes only merged candidates", async (t) => {
@@ -167,7 +233,13 @@ test("branch-cleaner dry-run preserves merged refs; --apply deletes only merged 
   git(cwd, "add", ".");
   git(cwd, "commit", "-qm", "feat: current work");
 
-  const dryRun = command("branch-cleaner", ["--json"], cwd);
+  const documentedExample = command("devwell", ["branches", "--stale", "30", "--graph"], cwd);
+  assert.match(documentedExample.stdout, /HISTORIQUE/);
+  const pretty = command("branch-cleaner", [], cwd);
+  assert.match(pretty.stdout, /RÉSUMÉ/);
+  assert.match(pretty.stdout, /1 candidate\(s\)/);
+  assert.match(pretty.stdout, /--apply/);
+  const dryRun = command("branch-cleaner", ["--dry-run", "--json"], cwd);
   const report = JSON.parse(dryRun.stdout);
   assert.ok(report.candidates.some((branch) => branch.name === "feature/merged"));
   assert.ok(!report.candidates.some((branch) => branch.name === "main"));
@@ -191,4 +263,35 @@ test("branch-cleaner audit always protects current and default branches", () => 
     staleDays: null,
   });
   assert.deepEqual(candidates.map((branch) => branch.name), ["feature/merged"]);
+});
+
+test("branch-cleaner explains why an empty repository cannot be audited", async (t) => {
+  const cwd = await fixture("devwell-empty-git-");
+  t.after(() => rm(cwd, { recursive: true, force: true }));
+  git(cwd, "init", "-q", "-b", "main");
+
+  const result = command("branch-cleaner", [], cwd, { allowFailure: true });
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /au moins un commit/);
+});
+
+test("branch-cleaner reports Git as a required dependency", async (t) => {
+  const cwd = await fixture("devwell-no-git-");
+  const emptyPath = join(cwd, "empty path");
+  t.after(() => rm(cwd, { recursive: true, force: true }));
+  await mkdir(emptyPath);
+
+  const result = command("branch-cleaner", [], cwd, {
+    allowFailure: true,
+    env: { PATH: emptyPath },
+  });
+  assert.equal(result.status, 2);
+  assert.match(result.stderr, /git/i);
+
+  const readmeResult = command("readme-gen", [], cwd, {
+    allowFailure: true,
+    env: { PATH: emptyPath },
+  });
+  assert.equal(readmeResult.status, 2);
+  assert.match(readmeResult.stderr, /git/i);
 });

@@ -12,7 +12,7 @@ import {
   writeAtomic,
 } from "../../core/src/index.js";
 
-const VERSION = "0.1.0";
+const VERSION = "0.1.1";
 const HELP = `readme-gen — Génère un changelog depuis Git
 
 USAGE
@@ -196,7 +196,10 @@ async function main(argv) {
 
   if (options.check) {
     const invalidCount = entries.filter((entry) => !entry.parsed).length;
-    process.stdout.write(`${invalidCount ? `${invalidCount} commit(s) non conventionnels` : "Historique valide"}\n`);
+    const result = invalidCount
+      ? `${invalidCount} commit(s) non conventionnel(s) sur ${entries.length} vérifié(s). Action recommandée : utilisez le format type(scope): description et relancez --check.`
+      : `Historique valide : ${entries.length} commit(s) vérifié(s).`;
+    process.stdout.write(`${result}\n`);
     return invalidCount ? 1 : 0;
   }
 
@@ -216,7 +219,7 @@ async function main(argv) {
   }
   const destination = resolve(cwd, options.output);
   const result = await writeAtomic(destination, output, { force: options.force, backup: options.force });
-  process.stdout.write(`CHANGELOG généré : ${destination}${result.backup ? ` (sauvegarde : ${result.backup})` : ""}\n`);
+  process.stdout.write(`CHANGELOG généré : ${destination} — ${entries.length} commit(s) inclus${result.backup ? ` (sauvegarde : ${result.backup})` : ""}\n`);
   return 0;
 }
 

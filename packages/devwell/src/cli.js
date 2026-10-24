@@ -4,7 +4,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { CliError, runCli, setExitCode } from "../../core/src/index.js";
 
-const VERSION = "0.1.0";
+const VERSION = "0.1.1";
 const HELP = `devwell — Des projets sains, des développeurs sereins
 
 USAGE

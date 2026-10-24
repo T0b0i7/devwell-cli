@@ -10,7 +10,7 @@ import {
   setExitCode,
 } from "../../core/src/index.js";
 
-const VERSION = "0.1.0";
+const VERSION = "0.1.1";
 const HELP = `env-doctor — Vérifie la cohérence des fichiers .env
 
 USAGE
@@ -60,6 +60,7 @@ const SECRET_RULES = [
 
 export function parseEnv(source) {
   const entries = [];
+  const malformed = [];
   const duplicateKeys = new Set();
   const seen = new Set();
 
@@ -67,7 +68,10 @@ export function parseEnv(source) {
     const line = raw.replace(/^\uFEFF/, "").trim();
     if (!line || line.startsWith("#")) return;
     const match = /^(?:export\s+)?([A-Za-z_][A-Za-z0-9_.-]*)\s*=\s*(.*)$/.exec(line);
-    if (!match) return;
+    if (!match) {
+      malformed.push({ line: index + 1 });
+      return;
+    }
     const [, key, rawValue] = match;
     const value = rawValue.replace(/\s+#.*$/, "").replace(/^(['"])(.*)\1$/, "$2");
     if (seen.has(key)) duplicateKeys.add(key);
@@ -75,7 +79,7 @@ export function parseEnv(source) {
     entries.push({ key, value, line: index + 1 });
   });
 
-  return { entries, duplicates: [...duplicateKeys] };
+  return { entries, duplicates: [...duplicateKeys], malformed };
 }
 
 function globToRegExp(glob) {
@@ -110,6 +114,16 @@ function compareEnv(reference, target, file, referenceFile, options) {
   const ignored = new Set(options.ignore);
   const issues = [];
 
+  for (const entry of target.malformed) {
+    issues.push({
+      code: "ENV_LINE_MALFORMED",
+      severity: "error",
+      file,
+      key: "LIGNE",
+      line: entry.line,
+      message: "Syntaxe invalide; la ligne a été ignorée",
+    });
+  }
   for (const key of target.duplicates) {
     if (!ignored.has(key)) issues.push({ code: "ENV_DUPLICATE_KEY", severity: "error", file, key, message: "Clé définie plusieurs fois" });
   }
@@ -147,8 +161,17 @@ function renderPretty(report) {
   for (const issue of report.issues) {
     lines.push(`${issue.severity === "error" ? "ERREUR" : "AVERTISSEMENT"} ${issue.file}${issue.line ? `:${issue.line}` : ""} ${issue.key} — ${issue.message}`);
   }
-  if (!report.issues.length) lines.push("Aucune incohérence détectée.");
-  lines.push("", `${report.summary.errors} erreur(s), ${report.summary.warnings} avertissement(s)`);
+  if (!report.issues.length) {
+    lines.push("Aucune incohérence détectée.");
+  }
+  const nextStep = report.summary.errors > 0
+    ? "Action recommandée : corrigez les erreurs ci-dessus avant de valider une configuration de travail ou de CI."
+    : report.summary.warnings > 0
+      ? "Action recommandée : vérifiez les avertissements et confirmez qu'ils sont intentionnels."
+      : "Action recommandée : rien à corriger pour le moment ; la configuration est cohérente.";
+  lines.push("", "RÉSUMÉ");
+  lines.push(`${report.summary.errors} erreur(s), ${report.summary.warnings} avertissement(s)`);
+  lines.push(nextStep);
   return `${lines.join("\n")}\n`;
 }
 
@@ -167,14 +190,22 @@ async function main(argv) {
   const files = await resolveFiles(options, positionals);
   if (!files.length) {
     const report = { schemaVersion: 1, files: [], issues: [], summary: { errors: 0, warnings: 0 } };
-    process.stdout.write(options.format === "json" || options.ci ? `${JSON.stringify(report, null, 2)}\n` : "Aucun fichier .env* détecté (référence attendue : .env.example).\n");
+    const message = "Aucun fichier .env* détecté. L'analyse n'a pas été effectuée. Action recommandée : ajoutez .env.example ou indiquez les fichiers avec --files.";
+    process.stdout.write(options.format === "json" || options.ci ? `${JSON.stringify(report, null, 2)}\n` : `${message}\n`);
     return 0;
   }
 
   const sourcePath = files[0];
   const reference = parseEnv(await readText(sourcePath));
   if (!reference.entries.length) throw new CliError(`${sourcePath} ne contient aucune variable valide`, 1);
-  const issues = [];
+  const issues = reference.malformed.map((entry) => ({
+    code: "ENV_LINE_MALFORMED",
+    severity: "error",
+    file: sourcePath,
+    key: "LIGNE",
+    line: entry.line,
+    message: "Syntaxe invalide; la ligne a été ignorée",
+  }));
   for (const file of files.slice(1)) {
     const target = parseEnv(await readText(file));
     issues.push(...compareEnv(reference, target, file, sourcePath, {

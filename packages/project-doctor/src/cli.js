@@ -15,7 +15,7 @@ import {
   writeJson,
 } from "../../core/src/index.js";
 
-const VERSION = "0.1.0";
+const VERSION = "0.1.1";
 const HELP = `project-doctor — Évalue la santé d'un projet Node.js ou Python
 
 USAGE
@@ -320,13 +320,29 @@ async function main(argv) {
   if (options.format === "json") process.stdout.write(writeJson(report));
   else if (options.format === "md") process.stdout.write(markdownReport(report));
   else {
-    process.stdout.write(`project-doctor ${VERSION} — ${report.project}\nSanté du projet : ${score}/100 — ${status}\n`);
+    const reviewCount = checks.filter((check) => check.severity !== "ok").length;
+    const lines = [
+      `project-doctor ${VERSION} — ${report.project}`,
+      `Santé du projet : ${score}/100 — ${status}`,
+    ];
     for (const check of checks) {
-      process.stdout.write(`${check.severity === "ok" ? "OK" : check.severity.toUpperCase()} ${check.label.padEnd(26)} ${String(check.earned).padStart(2)}/${check.weight}  ${check.message}\n`);
-      if (check.action) process.stdout.write(`  Action : ${check.action}\n`);
+      lines.push(`${check.severity === "ok" ? "OK" : check.severity.toUpperCase()} ${check.label.padEnd(26)} ${String(check.earned).padStart(2)}/${check.weight}  ${check.message}`);
+      if (check.action) lines.push(`  Action : ${check.action}`);
     }
-    for (const fix of proposedFixes) process.stdout.write(`Correction proposée : ${fix} (aucun changement; relancer avec --apply)\n`);
-    for (const fix of applied) process.stdout.write(`Correction appliquée : ${fix}\n`);
+    for (const fix of proposedFixes) lines.push(`Correction proposée : ${fix} (aucun changement; relancer avec --fix --apply)`);
+    for (const fix of applied) lines.push(`Correction appliquée : ${fix}`);
+    lines.push("", "RÉSUMÉ");
+    lines.push(`${checks.length} contrôle(s) effectué(s), ${reviewCount} à examiner — score : ${score}/100.`);
+    if (applied.length) {
+      lines.push("Action recommandée : vérifiez les corrections appliquées, puis relancez doctor.");
+    } else if (proposedFixes.length) {
+      lines.push("Action recommandée : relancez avec --fix --apply pour appliquer les corrections proposées.");
+    } else if (reviewCount) {
+      lines.push("Action recommandée : traitez les actions indiquées ci-dessus, puis relancez doctor.");
+    } else {
+      lines.push("Action recommandée : rien à corriger pour le moment ; la configuration est cohérente.");
+    }
+    process.stdout.write(`${lines.join("\n")}\n`);
   }
   if (options.report) {
     const reportPath = resolve(cwd, options.report);

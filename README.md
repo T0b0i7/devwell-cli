@@ -18,7 +18,7 @@ Devwell s'exécute localement dans le dépôt courant. Commence par les commande
 
 | Commande | Ce qu'elle vérifie ou produit | Exemple prudent |
 | --- | --- | --- |
-| `devwell env` | Compare des fichiers `.env`, signale les clés manquantes, orphelines, vides ou dupliquées, et repère certains motifs de secrets. Les valeurs ne sont pas affichées. | `devwell env --files .env.example,.env` |
+| `devwell env` | Compare des fichiers `.env`, signale les clés manquantes, orphelines, vides ou dupliquées ainsi que les lignes mal formées, et repère certains motifs de secrets. Les valeurs ne sont pas affichées. | `devwell env --files .env.example,.env` |
 | `devwell doctor` | Évalue certains aspects de santé d'un projet Node.js ou Python : runtime, configurations, lockfile, scripts et hygiène du dépôt. | `devwell doctor --offline` |
 | `devwell branches` | Audite les branches Git locales et présente les candidates selon leur état. Le mode aperçu est activé par défaut. | `devwell branches --stale 30 --graph` |
 | `devwell readme` | Prépare un changelog à partir des commits conventionnels ; peut aussi vérifier les commits ou créer un README minimal absent. | `devwell readme --dry-run` |
@@ -47,6 +47,36 @@ devwell readme --dry-run --json --output -
 
 `devwell doctor` fonctionne hors ligne par défaut ; `--offline` rend ce choix explicite. Vérifie le code de sortie de chaque commande dans ta CI et ajuste ses seuils à ton projet avant d'en faire un contrôle bloquant.
 
+### Codes de sortie
+
+| Code | Signification |
+| --- | --- |
+| `0` | Contrôle réussi, ou commande terminée sans erreur bloquante. |
+| `1` | Résultat non conforme à la règle demandée, option invalide, ou opération refusée (par exemple un fichier de sortie déjà présent). |
+| `2` | Prérequis ou contexte manquant, comme Git absent ou aucun manifeste de projet reconnu par `doctor`. |
+
+Le détail dépend de la commande : `env` renvoie `1` en cas d'erreur, et aussi en cas d'avertissement avec `--strict`. `doctor` renvoie `1` si le score est inférieur à `--min-score` (80 par défaut) ; `--strict` fait aussi échouer les erreurs de configuration. `readme --check` renvoie `1` si des commits ne suivent pas la convention attendue. `branches` renvoie `1` si une suppression candidate échoue. Les erreurs d'options et de contexte sont affichées sur stderr.
+
+### Formats des rapports
+
+- `env` : `pretty` par défaut, `json` ou `github`. `--ci` sélectionne JSON ; le rapport expose `schemaVersion`, `files`, `issues` et `summary`. Les valeurs des variables ne sont pas incluses. Sans fichier `.env*`, la commande indique que l'analyse n'a pas eu lieu et termine avec `0` : vérifie ce message avant de considérer le contrôle comme effectué.
+- `doctor` : tableau par défaut, `md` ou `json`, avec `schemaVersion`, `project`, `ecosystem`, `score`, `status`, `checks` et `fixes`. `--report <fichier.html>` écrit en plus un rapport HTML.
+- `branches` : sortie lisible par défaut ou JSON, avec `schemaVersion`, branches examinées, candidates, suppressions, échecs et éventuel graphe Git.
+- `readme` : Markdown par défaut ou JSON, avec `schemaVersion`, plage de commits, versions, détails et statistiques. `--output -` écrit le résultat sur stdout.
+
+Les rapports JSON sont destinés à l'automatisation ; leurs objets de premier niveau portent `schemaVersion: 1`. Les messages destinés aux humains restent sur stdout pour les résultats et sur stderr pour les erreurs.
+
+### Pannes courantes
+
+| Situation | Comportement |
+| --- | --- |
+| Aucun fichier `.env*` détecté | `env` prévient que l'analyse n'a pas eu lieu ; ajoute `.env.example` ou précise `--files`. |
+| Ligne `.env` mal formée | `env` indique le fichier et la ligne, sans afficher le contenu de la ligne. Le code de sortie est `1`. |
+| Git non installé | `readme` et `branches` affichent l'erreur de dépendance et renvoient `2`. |
+| Dépôt Git sans commit | `branches` explique qu'une référence de base valide est nécessaire et renvoie `1`. |
+| Aucun `package.json` ni `pyproject.toml` | `doctor` explique qu'aucun projet pris en charge n'a été trouvé et renvoie `2`. |
+| Fichier de sortie existant | `readme` refuse de l'écraser sans `--force` ; une erreur est affichée au lieu de remplacer le fichier silencieusement. |
+
 ## Sécurité et comportement
 
 - Les commandes s'exécutent sur ta machine ; le site web présente la suite, mais n'analyse pas tes dépôts.
@@ -61,15 +91,15 @@ Cette liste rassemble des pistes de travail, pas des engagements ni des dates de
 
 ### Fondations — à consolider
 
-- [ ] Ajouter des tests de cas limites supplémentaires : dépôts vides, Git absent, fichiers `.env` mal formés et chemins avec espaces.
+- [x] Ajouter des tests de cas limites : dépôts vides, Git absent, fichiers `.env` mal formés et chemins avec espaces.
 - [ ] Tester systématiquement l'installation et les commandes publiées sur Windows, macOS et Linux.
-- [ ] Documenter clairement les codes de sortie, les formats JSON et les scénarios de panne de chaque commande.
-- [ ] Vérifier que chaque exemple du site et du README correspond au comportement réel de la version publiée.
+- [x] Documenter les codes de sortie, les formats JSON et les scénarios de panne courants des commandes.
+- [x] Vérifier les exemples CLI du README par rapport aux options et tests de la version source.
 
 ### Expérience en ligne de commande — pistes
 
 - [ ] Harmoniser les options communes, les messages d'erreur et les conseils de correction.
-- [ ] Améliorer les résumés de fin pour indiquer ce qui a été vérifié et la prochaine action utile.
+- [x] Améliorer les résumés de fin pour indiquer ce qui a été vérifié et la prochaine action utile.
 - [ ] Étudier des options globales telles que `--quiet`, `--verbose` et `--no-color`, si elles améliorent les usages en terminal et en CI.
 - [ ] Évaluer une configuration partagée facultative pour éviter de répéter les mêmes réglages dans plusieurs commandes.
 
