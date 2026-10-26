@@ -9,6 +9,7 @@ import { CodeBlock } from "../components/CodeBlock";
 import { CopyButton } from "../components/CopyButton";
 import { Icon } from "../components/Icon";
 import { Terminal } from "../components/Terminal";
+import { useSiteContent } from "../data/siteContent";
 
 const accents: Record<ToolMeta["accent"], { tile: string; line: string; text: string; soft: string }> = {
   lime: { tile: "bg-lime", line: "bg-lime-deep", text: "text-lime-deep", soft: "bg-lime-soft" },
@@ -104,7 +105,7 @@ devwell branches --json`,
     hint: "Installation locale",
     code: `# Créer une archive depuis le dépôt
 npm pack
-npm install --global .\\devwell-0.1.0.tgz
+npm install --global .\\devwell-0.1.1.tgz
 
 # Puis utiliser les sous-commandes
 devwell env --json
@@ -128,9 +129,36 @@ export function HomePage() {
   const [tab, setTab] = useState("local");
   const currentTab = installTabs.find((item) => item.id === tab) ?? installTabs[0];
   const quickRows = comparisonRows.slice(0, 4);
+  const siteContent = useSiteContent();
 
   return (
     <main>
+      {siteContent.announcements.filter((announcement) => announcement.published).map((announcement) => (
+        <aside
+          key={announcement.id}
+          aria-label={`Annonce : ${announcement.title}`}
+          className="border-b border-lime-deep/20 bg-lime-soft px-4 py-3 text-ink"
+        >
+          <div className="mx-auto flex max-w-[1240px] flex-wrap items-center gap-x-3 gap-y-1.5 sm:px-2">
+            <span className="rounded-full bg-lime px-2 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wide">
+              Annonce
+            </span>
+            <strong className="text-[12px] font-semibold">{announcement.title}</strong>
+            <span className="text-[12px] text-ink-soft">{announcement.message}</span>
+            {announcement.href && announcement.linkLabel && (
+              <a
+                href={announcement.href}
+                className="inline-flex min-h-8 items-center gap-1 font-medium text-lime-deep underline underline-offset-2 hover:text-ink"
+                target={announcement.href.startsWith("https://") ? "_blank" : undefined}
+                rel={announcement.href.startsWith("https://") ? "noreferrer" : undefined}
+              >
+                {announcement.linkLabel}
+                <Icon name="arrow-up-right" size={12} />
+              </a>
+            )}
+          </div>
+        </aside>
+      ))}
       {/* HERO */}
       <section className="home-hero group relative isolate overflow-hidden border-b border-line">
         <div className="grid-paper pointer-events-none absolute inset-0 z-0 opacity-70 [mask-image:linear-gradient(to_bottom,black_10%,transparent_92%)]" aria-hidden="true" />
@@ -142,7 +170,7 @@ export function HomePage() {
           <div className="min-w-0 animate-rise">
             <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1.5 rounded-full border border-ink/10 bg-lime px-2.5 py-1 font-mono text-[9.5px] font-medium uppercase tracking-[0.08em] text-ink">
-                <span className="h-1.5 w-1.5 rounded-full bg-ink" /> v0.1.0 · disponibilité publique
+                <span className="h-1.5 w-1.5 rounded-full bg-ink" /> v0.1.1 · disponibilité publique
               </span>
               <span className="rounded-full border border-line bg-cream/80 px-2.5 py-1 font-mono text-[9.5px] tracking-[0.04em] text-muted">
                 4 outils CLI
@@ -156,10 +184,10 @@ export function HomePage() {
             </div>
 
             <h1 className="mt-6 font-display text-[2.65rem] font-medium leading-[0.98] tracking-[-0.05em] text-ink sm:text-[3.6rem] lg:text-[4.05rem]">
-              Quatre outils.
+              {siteContent.heroTitle}
               <br />
               <span className="relative inline-block font-serif text-[1.13em] font-normal italic tracking-[-0.02em] text-ink">
-                Zéro friction.
+                {siteContent.heroAccent}
                 <svg
                   viewBox="0 0 320 14"
                   className="absolute -bottom-2 left-0 w-[94%] text-lime-deep"
@@ -173,9 +201,7 @@ export function HomePage() {
             </h1>
 
             <p className="mt-7 max-w-[34rem] text-pretty text-[14.5px] leading-[1.75] text-ink-soft sm:text-[15.5px]">
-              Devwell documente vos releases, vérifie vos variables d'environnement, diagnostique vos
-              projets et nettoie vos branches git. En français, sans configuration, et jamais
-              destructive par défaut.
+              {siteContent.heroDescription}
             </p>
 
             <div className="mt-7 flex flex-wrap items-center gap-2.5">
@@ -588,7 +614,7 @@ export function HomePage() {
               </table>
             </div>
             <p className="border-t border-line bg-paper-2/40 px-3.5 py-2 font-mono text-[9px] text-faint">
-              Estimations v0.1.0 · TypeScript strict · Node -- 18.17 · 1 dépendance runtime par binaire
+              Estimations v0.1.1 · TypeScript strict · Node -- 18.17 · 1 dépendance runtime par binaire
             </p>
           </div>
         </div>

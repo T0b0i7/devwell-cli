@@ -3,14 +3,15 @@ import type { Route } from "../lib/router";
 import { useTheme } from "../lib/theme";
 import { Icon } from "./Icon";
 import { Logo } from "./Logo";
+import { useSiteContent } from "../data/siteContent";
 
 const NAV = [
-  { label: "Accueil", href: "#/", match: "home", icon: "home" as const },
-  { label: "Outils", href: "#/docs/readme-gen", match: "tool", icon: "terminal" as const },
-  { label: "Guide", href: "#/guide", match: "guide", icon: "book" as const },
-  { label: "Playground", href: "#/playground", match: "playground", icon: "play" as const },
-  { label: "Installation", href: "#/install", match: "install", icon: "download" as const },
-  { label: "Références", href: "#/comparatif", match: "compare", icon: "file" as const },
+  { id: "home", href: "#/", match: "home", icon: "home" as const },
+  { id: "tools", href: "#/docs/readme-gen", match: "tool", icon: "terminal" as const },
+  { id: "guide", href: "#/guide", match: "guide", icon: "book" as const },
+  { id: "playground", href: "#/playground", match: "playground", icon: "play" as const },
+  { id: "install", href: "#/install", match: "install", icon: "download" as const },
+  { id: "compare", href: "#/comparatif", match: "compare", icon: "file" as const },
 ];
 
 export function TopBar({
@@ -23,6 +24,7 @@ export function TopBar({
   onSearch: () => void;
 }) {
   const { theme, toggle } = useTheme();
+  const content = useSiteContent();
 
   return (
     <header className="nav-ambient sticky top-0 z-40 border-b border-line/80 bg-paper/85 backdrop-blur-xl">
@@ -39,45 +41,49 @@ export function TopBar({
         </button>
 
         <a href="#/" aria-label="Devwell, accueil" className="shrink-0">
-          <Logo />
+          <Logo name={content.siteTitle.toLowerCase()} />
         </a>
 
         <nav
           aria-label="Navigation principale"
           className="ml-2 hidden items-center gap-0.5 rounded-xl border border-line/80 bg-paper/55 p-1 lg:flex xl:ml-4 xl:gap-1"
         >
-          {NAV.map((item) => {
-            const active = route.name === item.match;
-            return (
-              <a
-                key={item.label}
-                href={item.href}
-                aria-current={active ? "page" : undefined}
-                className={cn(
-                  "group relative inline-flex min-h-10 items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-medium transition-colors duration-200 xl:px-3 xl:text-[13px]",
-                  active
-                    ? "nav-current-glow bg-lime-soft text-ink shadow-sm"
-                    : "text-muted hover:bg-paper-2/70 hover:text-ink",
-                )}
-              >
-                <Icon
-                  name={item.icon}
-                  size={14}
+          {content.navigation
+            .filter((item) => item.visible)
+            .map((entry) => {
+              const item = NAV.find((nav) => nav.id === entry.id);
+              if (!item) return null;
+              const active = route.name === item.match;
+              return (
+                <a
+                  key={item.id}
+                  href={item.href}
+                  aria-current={active ? "page" : undefined}
                   className={cn(
-                    "transition-colors",
-                    active ? "text-lime-deep" : "text-muted group-hover:text-ink",
+                    "group relative inline-flex min-h-10 items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-medium transition-colors duration-200 xl:px-3 xl:text-[13px]",
+                    active
+                      ? "nav-current-glow bg-lime-soft text-ink shadow-sm"
+                      : "text-muted hover:bg-paper-2/70 hover:text-ink",
                   )}
-                />
-                <span>{item.label}</span>
-              </a>
-            );
-          })}
+                >
+                  <Icon
+                    name={item.icon}
+                    size={14}
+                    className={cn(
+                      "transition-colors",
+                      active ? "text-lime-deep" : "text-muted group-hover:text-ink",
+                    )}
+                  />
+                  <span>{entry.label}</span>
+                </a>
+              );
+            })}
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
           <span className="hidden items-center gap-1.5 rounded-full border border-line bg-cream px-2.5 py-1 font-mono text-[10px] text-muted md:inline-flex">
             <span className="h-1.5 w-1.5 rounded-full bg-[#77a74a]" />
-            v0.1.0
+            v0.1.1
           </span>
 
           <button

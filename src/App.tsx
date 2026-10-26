@@ -9,10 +9,20 @@ import { ToolDocPage } from "./pages/ToolDocPage";
 import { GuidePage } from "./pages/GuidePage";
 import { PlaygroundPage } from "./pages/PlaygroundPage";
 import { ComparePage, InstallPage, ReleasePage, ResourcesPage } from "./pages/SuitePages";
+import { AdminPage } from "./pages/AdminPage";
+import { SiteContentProvider } from "./data/siteContent";
 
 const sidebarRoutes = new Set(["tool", "guide", "install", "resources", "release"]);
 
 export default function App() {
+  return (
+    <SiteContentProvider>
+      <AppShell />
+    </SiteContentProvider>
+  );
+}
+
+function AppShell() {
   const route = useRoute();
   const [mobileNav, setMobileNav] = useState(false);
   const [palette, setPalette] = useState(false);
@@ -89,6 +99,8 @@ export default function App() {
     }
   }
 
+  if (route.name === "admin") return <AdminPage />;
+
   function renderPage() {
     switch (route.name) {
       case "home":
@@ -107,6 +119,8 @@ export default function App() {
         return <ResourcesPage />;
       case "release":
         return <ReleasePage />;
+      case "admin":
+        return <AdminPage />;
       default:
         return <HomePage />;
     }

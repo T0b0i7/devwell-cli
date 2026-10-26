@@ -44,7 +44,7 @@ export const installSteps: { title: string; text: string; code: string; command:
   {
     title: "V-rifier en 2 secondes",
     text: "Chaque binaire expose --version et --help. Aucun acc-s r-seau n'est effectu- - ce stade.",
-    code: "devwell --version\n# 0.1.0\n\ndevwell doctor --help\ndevwell branches --json",
+    code: "devwell --version\n# 0.1.1\n\ndevwell doctor --help\ndevwell branches --json",
     command: "devwell --version",
   },
   {

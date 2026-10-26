@@ -9,7 +9,7 @@ export function LogoMark({ className }: { className?: string }) {
   );
 }
 
-export function Logo({ inverted = false }: { inverted?: boolean }) {
+export function Logo({ inverted = false, name = "devwell" }: { inverted?: boolean; name?: string }) {
   return (
     <span className="inline-flex items-center gap-2.5">
       <LogoMark />
@@ -20,7 +20,7 @@ export function Logo({ inverted = false }: { inverted?: boolean }) {
             inverted ? "text-cream" : "text-ink",
           )}
         >
-          devwell
+          {name}
         </span>
       </span>
     </span>

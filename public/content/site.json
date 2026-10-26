@@ -1,0 +1,17 @@
+{
+  "siteTitle": "Devwell",
+  "tagline": "Des projets sains, des développeurs sereins.",
+  "heroTitle": "Quatre outils.",
+  "heroAccent": "Zéro friction.",
+  "heroDescription": "Devwell documente vos releases, vérifie vos variables d'environnement, diagnostique vos projets et nettoie vos branches git. En français, sans configuration, et jamais destructive par défaut.",
+  "footerDescription": "Quatre outils CLI pour retirer le bruit, pas la rigueur. Conçu pour les équipes Node et Python, testé sur Linux, macOS et Windows.",
+  "navigation": [
+    { "id": "home", "label": "Accueil", "visible": true },
+    { "id": "tools", "label": "Outils", "visible": true },
+    { "id": "guide", "label": "Guide", "visible": true },
+    { "id": "playground", "label": "Playground", "visible": true },
+    { "id": "install", "label": "Installation", "visible": true },
+    { "id": "compare", "label": "Références", "visible": true }
+  ],
+  "announcements": []
+}

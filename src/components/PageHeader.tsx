@@ -79,7 +79,7 @@ export function SuiteSidekick() {
     <div className="relative w-full min-w-0 overflow-hidden rounded-xl border border-line bg-cream/90 shadow-[0_20px_50px_-40px_rgba(23,24,15,0.5)]">
       <div className="flex items-center justify-between border-b border-line bg-paper-2/70 px-3 py-2">
         <span className="font-mono text-[8.5px] uppercase tracking-[0.14em] text-muted">La suite en un regard</span>
-        <span className="rounded-full border border-line bg-cream px-1.5 py-0.5 font-mono text-[8px] text-muted">v0.1.0</span>
+        <span className="rounded-full border border-line bg-cream px-1.5 py-0.5 font-mono text-[8px] text-muted">v0.1.1</span>
       </div>
       <ul className="divide-y divide-line/70">
         {SUITE.map((tool, index) => (

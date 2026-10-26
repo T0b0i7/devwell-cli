@@ -2,6 +2,7 @@ import { toolDocs } from "../data/tools";
 import { CopyButton } from "./CopyButton";
 import { Icon } from "./Icon";
 import { Logo } from "./Logo";
+import { useSiteContent } from "../data/siteContent";
 
 const columns = [
   {
@@ -22,7 +23,7 @@ const columns = [
     title: "Ressources",
     links: [
       { label: "Ressources & CI", href: "#/ressources" },
-      { label: "Dépôt public à venir", href: "#/ressources" },
+      { label: "Code source GitHub", href: "https://github.com/T0b0i7/devwell-cli" },
       { label: "Contribuer", href: "#/ressources" },
       { label: "Licence MIT", href: "#/ressources" },
       { label: "Sécurité", href: "#/guide/securite" },
@@ -31,15 +32,15 @@ const columns = [
 ];
 
 export function Footer() {
+  const content = useSiteContent();
   return (
     <footer className="mt-20 bg-term text-cream sm:mt-28">
       <div className="mx-auto w-full max-w-[1240px] px-4 py-12 sm:px-6 sm:py-16">
         <div className="grid gap-10 lg:grid-cols-[1.3fr_2fr]">
           <div>
-            <Logo inverted />
+            <Logo inverted name={content.siteTitle.toLowerCase()} />
             <p className="mt-4 max-w-xs text-[13px] leading-relaxed text-[#a7ac9d]">
-               Quatre outils CLI pour retirer le bruit, pas la rigueur. Conçu pour les équipes Node et Python,
-               testé sur Linux, macOS et Windows.
+              {content.footerDescription}
             </p>
             <div className="mt-5 flex max-w-sm items-center gap-2 rounded-lg border border-white/12 bg-white/[0.04] px-3 py-2">
               <span className="font-mono text-[10px] text-lime">❯</span>
@@ -50,7 +51,7 @@ export function Footer() {
             </div>
             <div className="mt-5 flex flex-wrap gap-2 font-mono text-[9.5px] text-[#9ba190]">
               <span className="inline-flex items-center gap-1.5 rounded-full border border-white/12 px-2 py-1">
-                <span className="h-1.5 w-1.5 rounded-full bg-lime" /> v0.1.0 - stable
+                <span className="h-1.5 w-1.5 rounded-full bg-lime" /> v0.1.1 - stable
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full border border-white/12 px-2 py-1">
                 <Icon name="shield" size={10} /> dry-run par défaut

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { toolDocs } from "../data/tools";
 import { guideSections } from "../data/guide";
+import { useSiteContent } from "../data/siteContent";
 import type { Route } from "../lib/router";
 import { cn } from "../utils/cn";
 import { Icon } from "./Icon";
@@ -75,7 +76,16 @@ export function SidebarNav({
 }) {
   const activeSlug = route.name === "tool" ? route.slug : null;
   const activeSection = route.name === "tool" ? route.section : undefined;
+  const siteContent = useSiteContent();
   const [expanded, setExpanded] = useState<string[]>(activeSlug ? [activeSlug] : [toolDocs[0].slug]);
+  const primaryLinks = {
+    home: "#/",
+    tools: "#/docs/readme-gen",
+    guide: "#/guide",
+    playground: "#/playground",
+    install: "#/install",
+    compare: "#/comparatif",
+  } as const;
 
   useEffect(() => {
     if (activeSlug) {
@@ -100,10 +110,19 @@ export function SidebarNav({
       <div className="min-h-0 flex-1 overflow-y-auto pb-6 pr-1">
         <GroupTitle>Démarrage</GroupTitle>
         <div className="space-y-0.5">
-          <NavLink href="#/" label="Vue d'ensemble" active={isActive(route, "#/")} onClick={onNavigate} />
-          <NavLink href="#/install" label="Installation" active={isActive(route, "#/install")} meta="60 s" onClick={onNavigate} />
-          <NavLink href="#/guide" label="Guide d'utilisation" active={isActive(route, "#/guide")} onClick={onNavigate} />
-          <NavLink href="#/playground" label="Playground" active={isActive(route, "#/playground")} meta="demo" onClick={onNavigate} />
+          {siteContent.navigation.filter((item) => item.visible).map((item) => {
+            const href = primaryLinks[item.id];
+            return (
+              <NavLink
+                key={item.id}
+                href={href}
+                label={item.id === "home" ? "Vue d'ensemble" : item.label}
+                active={isActive(route, href)}
+                meta={item.id === "install" ? "60 s" : item.id === "playground" ? "demo" : undefined}
+                onClick={onNavigate}
+              />
+            );
+          })}
         </div>
 
         {route.name === "guide" && (
@@ -219,7 +238,7 @@ export function SidebarNav({
           </a>
         </div>
         <div className="mt-2 flex items-center justify-between px-1 pb-1 font-mono text-[9.5px] text-faint">
-          <span>MIT - v0.1.0</span>
+          <span>MIT - v0.1.1</span>
           <span>Devwell CLI</span>
         </div>
       </div>

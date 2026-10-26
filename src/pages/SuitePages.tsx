@@ -119,7 +119,7 @@ export function ResourcesPage() {
         compact
         sidekick={<SuiteSidekick />}
         meta={[
-          { label: "Dépôt", value: "Publication à venir" },
+          { label: "Dépôt", value: "GitHub public" },
           { label: "Licence", value: "MIT · 2026" },
           { label: "CI", value: "3 OS -- Node 18/20/22" },
           { label: "Publication", value: "npm provenance OIDC" },
@@ -127,7 +127,7 @@ export function ResourcesPage() {
         actions={
           <>
             <span className="inline-flex items-center gap-2 rounded-xl bg-ink px-3.5 py-2 text-[11.5px] font-medium text-cream">
-              <Icon name="github" size={13} /> Dépôt public à venir
+              <Icon name="github" size={13} /> Code source sur GitHub
             </span>
             <a
               href="#/guide/securite"
@@ -180,7 +180,7 @@ export function ReleasePage() {
         kicker="La suite · livraison & roadmap"
         title={
           <>
-            Livrer la v0.1.0.
+            Livrer la v0.1.1.
             <br />
             <span className="font-serif text-[1.05em] font-normal italic">Préparer la suite.</span>
           </>
@@ -189,7 +189,7 @@ export function ReleasePage() {
         compact
         sidekick={<SuiteSidekick />}
         meta={[
-          { label: "Version", value: "0.1.0" },
+          { label: "Version", value: "0.1.1" },
           { label: "Licence", value: "MIT" },
           { label: "Priorités", value: "P0 : 2 outils · P1 : 2 outils" },
           { label: "Prochaine étape", value: "v1.0 sous 6 semaines" },
@@ -306,7 +306,7 @@ export function ComparePage() {
 
         <div className="mt-7 overflow-hidden rounded-xl border border-line bg-cream">
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line bg-paper-2/60 px-4 py-2.5">
-            <p className="font-mono text-[9px] font-semibold uppercase tracking-[0.13em] text-muted">Récapitulatif -" v0.1.0</p>
+            <p className="font-mono text-[9px] font-semibold uppercase tracking-[0.13em] text-muted">Récapitulatif -" v0.1.1</p>
             <p className="font-mono text-[9px] text-faint">Estimations · TypeScript strict</p>
           </div>
           <div className="overflow-x-auto">

@@ -66,6 +66,12 @@ Le détail dépend de la commande : `env` renvoie `1` en cas d'erreur, et aussi 
 
 Les rapports JSON sont destinés à l'automatisation ; leurs objets de premier niveau portent `schemaVersion: 1`. Les messages destinés aux humains restent sur stdout pour les résultats et sur stderr pour les erreurs.
 
+## Administration du site
+
+Le panneau privé est disponible à `https://devwell-vert.vercel.app/#/admin`. Il permet de gérer les annonces, l'identité de la page d'accueil, le pied de page et la navigation. L'accès nécessite une OAuth App GitHub, une liste de comptes administrateurs et des variables d'environnement Vercel ; les modifications sont versionnées dans GitHub puis déployées par Vercel.
+
+Suis le [guide de configuration de l'administration](./docs/admin-setup.md) avant d'activer l'accès en production. Ne place jamais le Client secret OAuth ou la clé de session dans le dépôt.
+
 ### Pannes courantes
 
 | Situation | Comportement |
