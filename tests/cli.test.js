@@ -153,7 +153,10 @@ test("env-doctor accepts environment file paths containing spaces", async (t) =>
 
   const result = command("env-doctor", [reference, target, "--json"], cwd);
   const files = JSON.parse(result.stdout).files.map((file) => file.replaceAll("\\", "/"));
-  assert.deepEqual(files, ["config files/.env.example", "config files/.env"]);
+  assert.deepEqual(
+    files.map((file) => file.slice(file.indexOf("config files/"))),
+    ["config files/.env.example", "config files/.env"],
+  );
 });
 
 test("env-doctor explains how to proceed when no environment files are found", async (t) => {

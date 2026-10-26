@@ -55,7 +55,7 @@ test("admin sessions are encrypted and reject tampering", () => {
     { token: readSession(req)?.token, login: readSession(req)?.login },
     { token: "private-token", login: "owner" },
   );
-  const tampered = `${session.value.slice(0, -1)}x`;
+  const tampered = `${session.value[0] === "A" ? "B" : "A"}${session.value.slice(1)}`;
   assert.equal(readSession({ headers: { cookie: `${session.name}=${tampered}` } }), null);
   assert.ok(!session.value.includes("private-token"));
 });
