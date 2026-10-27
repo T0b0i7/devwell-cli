@@ -15,18 +15,20 @@ COMMANDES
   env         Vérifie la cohérence des fichiers .env
   doctor      Évalue la santé d'un projet Node.js ou Python
   branches    Audite et nettoie les branches locales Git
+  context     Prépare un AGENTS.md avec le contexte détecté du projet
 
 OPTIONS
   -h, --help      Affiche cette aide
   -v, --version   Affiche la version
 
 ALIAS HISTORIQUES
-  readme-gen, env-doctor, project-doctor, branch-cleaner restent disponibles
+  readme-gen, env-doctor, project-doctor, branch-cleaner, context-pack restent disponibles
 
 EXEMPLES
   devwell env --help
   devwell doctor --json
-  devwell branches --json`;
+  devwell branches --json
+  devwell context`;
 
 const COMMANDS = {
   readme: "readme-gen",
@@ -37,6 +39,8 @@ const COMMANDS = {
   "project-doctor": "project-doctor",
   branches: "branch-cleaner",
   "branch-cleaner": "branch-cleaner",
+  context: "context-pack",
+  "context-pack": "context-pack",
 };
 
 const PACKAGE_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../..");

@@ -1,0 +1,16 @@
+{
+  "name": "@devwell/context-pack",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Prépare des consignes de projet vérifiables pour les assistants de code.",
+  "type": "module",
+  "bin": {
+    "context-pack": "./src/cli.js"
+  },
+  "engines": {
+    "node": ">=18.17"
+  },
+  "dependencies": {
+    "@devwell/core": "*"
+  }
+}

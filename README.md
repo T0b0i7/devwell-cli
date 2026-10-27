@@ -1,6 +1,6 @@
 # Devwell
 
-**Des projets sains, des développeurs sereins.** Devwell rassemble quatre commandes locales pour mieux documenter un dépôt, vérifier sa configuration et garder ses branches sous contrôle.
+**Des projets sains, des développeurs sereins.** Devwell rassemble des commandes locales pour mieux documenter un dépôt, vérifier sa configuration et garder ses branches sous contrôle.
 
 [Site web](https://devwell-vert.vercel.app/) · [Code source](https://github.com/T0b0i7/devwell-cli) · [Signaler un problème](https://github.com/T0b0i7/devwell-cli/issues)
 
@@ -14,7 +14,7 @@ devwell --help
 
 Devwell s'exécute localement dans le dépôt courant. Commence par les commandes de diagnostic et les modes aperçu ; les opérations qui écrivent ou suppriment demandent une option explicite.
 
-## Les quatre commandes
+## Les commandes
 
 | Commande | Ce qu'elle vérifie ou produit | Exemple prudent |
 | --- | --- | --- |
@@ -22,6 +22,7 @@ Devwell s'exécute localement dans le dépôt courant. Commence par les commande
 | `devwell doctor` | Évalue certains aspects de santé d'un projet Node.js ou Python : runtime, configurations, lockfile, scripts et hygiène du dépôt. | `devwell doctor --offline` |
 | `devwell branches` | Audite les branches Git locales et présente les candidates selon leur état. Le mode aperçu est activé par défaut. | `devwell branches --stale 30 --graph` |
 | `devwell readme` | Prépare un changelog à partir des commits conventionnels ; peut aussi vérifier les commits ou créer un README minimal absent. | `devwell readme --dry-run` |
+| `devwell context` | Prépare un `AGENTS.md` avec les manifestes, scripts npm et dossiers détectés. L'aperçu est affiché avant toute écriture. | `devwell context` puis `devwell context --write` |
 
 Pour les options, les formats et les codes de sortie :
 
@@ -30,9 +31,10 @@ devwell env --help
 devwell doctor --help
 devwell branches --help
 devwell readme --help
+devwell context --help
 ```
 
-Les anciens binaires restent disponibles : `env-doctor`, `project-doctor`, `branch-cleaner` et `readme-gen`.
+Les binaires `context-pack`, `env-doctor`, `project-doctor`, `branch-cleaner` et `readme-gen` restent disponibles.
 
 ## Rapports et automatisation
 
@@ -89,6 +91,7 @@ Suis le [guide de configuration de l'administration](./docs/admin-setup.md) avan
 - `devwell env` ne révèle pas les valeurs des variables.
 - `devwell doctor` n'applique aucune correction sans `--fix --apply`.
 - `devwell branches` simule le nettoyage par défaut. `--apply` cible les candidates fusionnées ; les branches non fusionnées nécessitent `--force-unmerged` et une confirmation interactive.
+- `devwell context` n'écrit rien sans `--write` et refuse de remplacer un fichier existant. Il examine uniquement les manifestes et la structure de premier niveau ; il n'envoie aucune donnée sur le réseau.
 - Aucun outil ne remplace une revue de code, un gestionnaire de secrets, une sauvegarde ou une politique de sécurité.
 
 ## Feuille de route

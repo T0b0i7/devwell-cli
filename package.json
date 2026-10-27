@@ -1,7 +1,7 @@
 {
   "name": "devwell",
   "version": "0.1.1",
-  "description": "Healthy projects, happier developers. Four practical repository maintenance commands.",
+  "description": "Healthy projects, happier developers. Practical repository maintenance commands.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/T0b0i7/devwell-cli.git"
@@ -29,7 +29,8 @@
     "readme-gen": "packages/readme-gen/src/cli.js",
     "env-doctor": "packages/env-doctor/src/cli.js",
     "project-doctor": "packages/project-doctor/src/cli.js",
-    "branch-cleaner": "packages/branch-cleaner/src/cli.js"
+    "branch-cleaner": "packages/branch-cleaner/src/cli.js",
+    "context-pack": "packages/context-pack/src/cli.js"
   },
   "files": [
     "LICENSE",
@@ -51,7 +52,8 @@
     "cli:readme-gen": "node packages/readme-gen/src/cli.js",
     "cli:env-doctor": "node packages/env-doctor/src/cli.js",
     "cli:project-doctor": "node packages/project-doctor/src/cli.js",
-    "cli:branch-cleaner": "node packages/branch-cleaner/src/cli.js"
+    "cli:branch-cleaner": "node packages/branch-cleaner/src/cli.js",
+    "cli:context-pack": "node packages/context-pack/src/cli.js"
   },
   "devDependencies": {
     "@tailwindcss/vite": "4.1.17",

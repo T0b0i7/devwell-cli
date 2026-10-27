@@ -16,6 +16,7 @@ const commands = {
   "env-doctor": resolve(root, "packages/env-doctor/src/cli.js"),
   "project-doctor": resolve(root, "packages/project-doctor/src/cli.js"),
   "branch-cleaner": resolve(root, "packages/branch-cleaner/src/cli.js"),
+  "context-pack": resolve(root, "packages/context-pack/src/cli.js"),
 };
 
 async function fixture(prefix) {
@@ -57,6 +58,7 @@ test("devwell dispatches subcommands and preserves legacy command aliases", asyn
 
   const help = command("devwell", ["--help"], cwd);
   assert.match(help.stdout, /devwell env --help/);
+  assert.match(help.stdout, /context\s+Prépare un AGENTS\.md/);
   const report = command("devwell", ["env", "--files", ".env.example,.env", "--ci", "--json"], cwd);
   assert.deepEqual(JSON.parse(report.stdout).summary, { errors: 0, warnings: 0 });
   const pretty = command("env-doctor", [], cwd);
@@ -67,6 +69,44 @@ test("devwell dispatches subcommands and preserves legacy command aliases", asyn
   assert.deepEqual(JSON.parse(legacy.stdout).summary, { errors: 0, warnings: 0 });
   const version = command("devwell", ["--version"], cwd);
   assert.equal(version.stdout.trim(), "0.1.1");
+});
+
+test("context-pack detects project context, previews, writes explicitly, and refuses overwrites", async (t) => {
+  const cwd = await fixture("devwell-context-pack-");
+  t.after(() => rm(cwd, { recursive: true, force: true }));
+  await mkdir(join(cwd, "src"));
+  await mkdir(join(cwd, "tests"));
+  await writeFile(join(cwd, "package-lock.json"), "{}");
+  await writeFile(join(cwd, "package.json"), JSON.stringify({
+    name: "sample-app",
+    dependencies: { next: "1.0.0", react: "1.0.0" },
+    scripts: { build: "echo do-not-copy-this-script-body", test: "node --test" },
+  }));
+
+  const preview = command("context-pack", [], cwd);
+  assert.match(preview.stdout, /# Contexte du projet : sample-app/);
+  assert.match(preview.stdout, /Node\.js, Next\.js, React/);
+  assert.match(preview.stdout, /npm run build/);
+  assert.match(preview.stdout, /Structure de premier niveau/);
+  assert.ok(!preview.stdout.includes("do-not-copy-this-script-body"));
+  assert.equal(await readFile(join(cwd, "AGENTS.md"), "utf8").catch(() => null), null);
+
+  command("devwell", ["context", "--write"], cwd);
+  const generated = await readFile(join(cwd, "AGENTS.md"), "utf8");
+  assert.match(generated, /N'effectuez pas d'action destructive/);
+
+  const overwrite = command("devwell", ["context", "--write"], cwd, { allowFailure: true });
+  assert.equal(overwrite.status, 1);
+  assert.match(overwrite.stderr, /existe déjà/);
+  assert.equal(await readFile(join(cwd, "AGENTS.md"), "utf8"), generated);
+});
+
+test("context-pack reports when no supported manifest is present", async (t) => {
+  const cwd = await fixture("devwell-context-empty-");
+  t.after(() => rm(cwd, { recursive: true, force: true }));
+  const result = command("context-pack", [], cwd, { allowFailure: true });
+  assert.equal(result.status, 2);
+  assert.match(result.stderr, /Aucun manifeste reconnu/);
 });
 
 async function gitFixture() {
