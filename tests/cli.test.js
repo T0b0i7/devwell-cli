@@ -97,7 +97,7 @@ test("context-pack detects project context, previews, writes explicitly, and ref
 
   const overwrite = command("devwell", ["context", "--write"], cwd, { allowFailure: true });
   assert.equal(overwrite.status, 1);
-  assert.match(overwrite.stderr, /existe déjà/);
+  assert.match(overwrite.stderr, /déplacez-le ou choisissez un autre chemin/);
   assert.equal(await readFile(join(cwd, "AGENTS.md"), "utf8"), generated);
 });
 

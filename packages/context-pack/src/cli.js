@@ -233,7 +233,17 @@ async function main(argv) {
   }
 
   const target = resolve(process.cwd(), options.output);
-  await writeAtomic(target, content);
+  if (await pathExists(target)) {
+    throw new CliError(`${basename(target)} existe déjà; déplacez-le ou choisissez un autre chemin.`, 1);
+  }
+  try {
+    await writeAtomic(target, content);
+  } catch (error) {
+    if (error instanceof CliError && error.message.includes("utilisez --force")) {
+      throw new CliError(`${basename(target)} existe déjà; déplacez-le ou choisissez un autre chemin.`, 1);
+    }
+    throw error;
+  }
   process.stdout.write(`\nFichier créé : ${target}\n`);
   return 0;
 }
