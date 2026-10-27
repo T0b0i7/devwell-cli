@@ -56,7 +56,7 @@
     "cli:context-pack": "node packages/context-pack/src/cli.js"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "4.1.17",
+    "@tailwindcss/vite": "4.3.3",
     "@types/node": "22.19.17",
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
