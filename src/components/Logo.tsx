@@ -17,7 +17,7 @@ export function Logo({ inverted = false, name = "devwell" }: { inverted?: boolea
         <span
           className={cn(
             "font-display text-[1.28rem] font-semibold tracking-[-0.04em]",
-            inverted ? "text-cream" : "text-ink",
+            inverted ? "text-on-terminal" : "text-ink",
           )}
         >
           {name}

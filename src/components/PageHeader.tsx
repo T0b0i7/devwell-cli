@@ -32,7 +32,7 @@ export function PageHeader({
       >
         <div className={cn("grid grid-cols-1 gap-8", aside && "lg:grid-cols-[1.35fr_0.65fr] lg:items-end")}>
           <div>
-            <p className="flex items-center gap-2 font-mono text-[9.5px] font-medium uppercase tracking-[0.18em] text-muted">
+            <p className="flex items-center gap-2 font-mono text-[10.5px] font-medium uppercase tracking-[0.18em] text-muted">
               <span className="h-1.5 w-1.5 rounded-full bg-lime-deep/70" aria-hidden="true" />
               {kicker}
             </p>
@@ -56,7 +56,7 @@ export function PageHeader({
           <dl className={cn("mt-2 grid grid-cols-2 gap-x-6 gap-y-4 border-t border-line/80 pt-5 sm:grid-cols-4", sidekick && "lg:col-span-2 lg:mt-0")}>
             {meta.map((item) => (
               <div key={item.label}>
-                <dt className="font-mono text-[8.5px] uppercase tracking-[0.13em] text-faint">{item.label}</dt>
+                <dt className="font-mono text-[10px] uppercase tracking-[0.13em] text-faint">{item.label}</dt>
                 <dd className="mt-1 text-[13px] font-medium text-ink">{item.value}</dd>
               </div>
             ))}
@@ -78,25 +78,25 @@ export function SuiteSidekick() {
   return (
     <div className="relative w-full min-w-0 overflow-hidden rounded-xl border border-line bg-cream/90 shadow-[0_20px_50px_-40px_rgba(23,24,15,0.5)]">
       <div className="flex items-center justify-between border-b border-line bg-paper-2/70 px-3 py-2">
-        <span className="font-mono text-[8.5px] uppercase tracking-[0.14em] text-muted">La suite en un regard</span>
-        <span className="rounded-full border border-line bg-cream px-1.5 py-0.5 font-mono text-[8px] text-muted">v0.1.1</span>
+        <span className="font-mono text-[9.5px] uppercase tracking-[0.14em] text-muted">La suite en un regard</span>
+        <span className="rounded-full border border-line bg-cream px-1.5 py-0.5 font-mono text-[9px] text-muted">v0.1.1</span>
       </div>
       <ul className="divide-y divide-line/70">
         {SUITE.map((tool, index) => (
           <li key={tool.name}>
             <a href={`#/docs/${tool.name}`} className="group flex items-center gap-2.5 px-3 py-2 transition hover:bg-lime-soft/40">
-              <span className="font-mono text-[8px] text-faint">0{index + 1}</span>
+              <span className="font-mono text-[9px] text-faint">0{index + 1}</span>
               <span className="min-w-0 flex-1">
-                <span className="block truncate font-mono text-[10.5px] font-medium text-ink">{tool.name}</span>
-                <span className="block truncate text-[9.5px] text-muted">{tool.note}</span>
+                <span className="block truncate font-mono text-[11px] font-medium text-ink">{tool.name}</span>
+                <span className="block truncate text-[10.5px] text-muted">{tool.note}</span>
               </span>
-              <span className="shrink-0 font-mono text-[8px] text-faint">exit {tool.code}</span>
+              <span className="shrink-0 font-mono text-[9px] text-faint">exit {tool.code}</span>
               <span className="font-mono text-[10px] text-lime-deep opacity-0 transition group-hover:opacity-100">→</span>
             </a>
           </li>
         ))}
       </ul>
-      <div className="flex items-center justify-between border-t border-line bg-paper-2/50 px-3 py-1.5 font-mono text-[8.5px] text-muted">
+      <div className="flex items-center justify-between border-t border-line bg-paper-2/50 px-3 py-1.5 font-mono text-[9.5px] text-muted">
         <span>Node ≥ 18.17 · MIT</span>
         <span className="inline-flex items-center gap-1"><span className="h-1 w-1 rounded-full bg-[#77a74a]" /> prêt pour la CI</span>
       </div>

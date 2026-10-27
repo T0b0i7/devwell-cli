@@ -133,7 +133,7 @@ export function ToolDocPage({ route }: { route: Extract<Route, { name: "tool" }>
                 aria-current={active ? "true" : undefined}
                 className={cn(
                   "inline-flex shrink-0 items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[10px] transition-colors",
-                  active ? "bg-ink text-lime" : "text-muted hover:bg-paper-2 hover:text-ink",
+                  active ? "bg-term text-lime" : "text-muted hover:bg-paper-2 hover:text-ink",
                 )}
               >
                 <span className={cn("text-[8.5px]", active ? "text-lime/70" : "text-faint")}>{section.letter}</span>

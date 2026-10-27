@@ -238,7 +238,7 @@ export function SidebarNav({
           </a>
         </div>
         <div className="mt-2 flex items-center justify-between px-1 pb-1 font-mono text-[9.5px] text-faint">
-          <span>MIT - v0.1.1</span>
+          <span>Licence MIT</span>
           <span>Devwell CLI</span>
         </div>
       </div>

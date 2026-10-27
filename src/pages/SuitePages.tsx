@@ -26,7 +26,7 @@ function ContentShell({ blocks, aside }: { blocks: Block[]; aside?: React.ReactN
 function AsideCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="rounded-xl border border-line bg-cream p-4">
-      <p className="font-mono text-[8.5px] uppercase tracking-[0.14em] text-faint">{title}</p>
+      <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">{title}</p>
       <div className="mt-2.5">{children}</div>
     </div>
   );

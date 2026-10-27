@@ -79,7 +79,7 @@ function ToolCard({ tool }: { tool: ToolMeta }) {
         <span className="relative z-10">
           <CopyButton value={tool.binary} variant="light" label="" />
         </span>
-        <span className="flex h-6 w-6 items-center justify-center rounded-full border border-line bg-paper text-ink transition-colors group-hover:border-ink group-hover:bg-ink group-hover:text-lime">
+        <span className="flex h-6 w-6 items-center justify-center rounded-full border border-line bg-paper text-ink transition-colors group-hover:border-term group-hover:bg-term group-hover:text-lime">
           <Icon name="arrow-up-right" size={12} />
         </span>
       </div>
@@ -127,13 +127,35 @@ devwell branches --help`,
 
 export function HomePage() {
   const [tab, setTab] = useState("local");
+  const [dismissedAnnouncements, setDismissedAnnouncements] = useState<string[]>(() => {
+    try {
+      const saved = window.localStorage.getItem("devwell-dismissed-announcements");
+      const parsed: unknown = saved ? JSON.parse(saved) : [];
+      return Array.isArray(parsed) ? parsed.filter((id): id is string => typeof id === "string") : [];
+    } catch (error) {
+      console.warn("Devwell: impossible de charger les annonces masquées.", error);
+      return [];
+    }
+  });
   const currentTab = installTabs.find((item) => item.id === tab) ?? installTabs[0];
   const quickRows = comparisonRows.slice(0, 4);
   const siteContent = useSiteContent();
 
+  function dismissAnnouncement(id: string) {
+    const next = [...new Set([...dismissedAnnouncements, id])];
+    setDismissedAnnouncements(next);
+    try {
+      window.localStorage.setItem("devwell-dismissed-announcements", JSON.stringify(next));
+    } catch (error) {
+      console.error("Devwell: impossible d'enregistrer la fermeture de l'annonce.", error);
+    }
+  }
+
   return (
     <main>
-      {siteContent.announcements.filter((announcement) => announcement.published).map((announcement) => (
+      {siteContent.announcements
+        .filter((announcement) => announcement.published && !dismissedAnnouncements.includes(announcement.id))
+        .map((announcement) => (
         <aside
           key={announcement.id}
           aria-label={`Annonce : ${announcement.title}`}
@@ -156,6 +178,15 @@ export function HomePage() {
                 <Icon name="arrow-up-right" size={12} />
               </a>
             )}
+            <button
+              type="button"
+              onClick={() => dismissAnnouncement(announcement.id)}
+              className="ml-auto inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-ink-soft transition hover:bg-lime/40 hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-deep"
+              aria-label={`Fermer l'annonce : ${announcement.title}`}
+              title="Fermer l'annonce"
+            >
+              <Icon name="close" size={15} />
+            </button>
           </div>
         </aside>
       ))}
@@ -292,7 +323,7 @@ export function HomePage() {
             >
               <span className="font-mono text-[9.5px] text-faint">{tool.index}</span>
               <span className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-ink/10", accents[tool.accent].tile)}>
-                <Icon name={tool.icon} size={14} className="text-ink" />
+                <Icon name={tool.icon} size={14} className="text-on-accent" />
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block truncate font-mono text-[11.5px] font-medium text-ink">{tool.name}</span>
@@ -355,23 +386,23 @@ export function HomePage() {
 
       {/* PRINCIPLES */}
       <section className="mx-auto w-full max-w-[1240px] px-4 sm:px-6">
-        <div className="relative min-w-0 grid-cols-1 overflow-hidden rounded-[1.75rem] bg-term px-5 py-9 text-cream sm:px-9 sm:py-11">
+        <div className="relative min-w-0 grid-cols-1 overflow-hidden rounded-[1.75rem] bg-term px-5 py-9 text-on-terminal sm:px-9 sm:py-11">
           <div className="grid-dark pointer-events-none absolute inset-0 opacity-60" aria-hidden="true" />
           <div className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-lime/10 blur-3xl" aria-hidden="true" />
           <div className="relative grid grid-cols-1 gap-9 lg:grid-cols-[0.85fr_1.35fr] lg:gap-14">
             <div>
               <Kicker dark>Principes de conception</Kicker>
-              <h2 className="mt-3 font-display text-[1.7rem] font-medium leading-[1.1] tracking-[-0.035em] text-cream sm:text-[2.1rem]">
+              <h2 className="mt-3 font-display text-[1.7rem] font-medium leading-[1.1] tracking-[-0.035em] text-on-terminal sm:text-[2.1rem]">
                 La confiance se code dans les{" "}
                 <span className="font-serif font-normal italic text-lime">valeurs par défaut.</span>
               </h2>
-              <p className="mt-4 max-w-sm text-[12.5px] leading-[1.75] text-[#adb2a4]">
+              <p className="mt-4 max-w-sm text-[14px] leading-[1.75] text-[#adb2a4]">
                 Quatre binaires indépendants, un noyau commun testé, et une règle : rien ne se passe
                 sans consentement explicite.
               </p>
               <a
                 href="#/ressources"
-                className="mt-6 inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-2 font-mono text-[10.5px] text-cream transition hover:border-lime/50 hover:text-lime"
+                className="mt-6 inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-2 font-mono text-[11.5px] text-on-terminal transition hover:border-lime/50 hover:text-lime"
               >
                 Lire les décisions techniques <Icon name="arrow-right" size={12} />
               </a>
@@ -380,11 +411,11 @@ export function HomePage() {
               {principles.map((principle, index) => (
                 <div key={principle.title} className="border-t border-white/12 pt-4">
                   <div className="flex items-baseline justify-between gap-3">
-                    <h3 className="font-display text-[14px] font-medium text-cream">{principle.title}</h3>
-                    <span className="font-mono text-[8.5px] text-[#787e6f]">0{index + 1}</span>
+                    <h3 className="font-display text-[15px] font-medium text-on-terminal">{principle.title}</h3>
+                    <span className="font-mono text-[9px] text-[#a5ab9c]">0{index + 1}</span>
                   </div>
-                  <p className="mt-2 text-[11.8px] leading-[1.7] text-[#a5ab9c]">{principle.text}</p>
-                  <p className="mt-2.5 inline-flex rounded border border-lime/25 bg-lime/10 px-1.5 py-0.5 font-mono text-[9px] text-lime">
+                  <p className="mt-2 text-[13px] leading-[1.7] text-[#a5ab9c]">{principle.text}</p>
+                  <p className="mt-2.5 inline-flex rounded border border-lime/25 bg-lime/10 px-1.5 py-0.5 font-mono text-[10px] text-lime">
                     {principle.metric}
                   </p>
                 </div>
@@ -400,7 +431,7 @@ export function HomePage() {
             ].map(([value, label]) => (
               <div key={label}>
                 <p className="font-display text-[1.45rem] font-medium tracking-[-0.03em] text-lime">{value}</p>
-                <p className="mt-0.5 font-mono text-[9px] uppercase tracking-[0.08em] text-[#8f9585]">{label}</p>
+                <p className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.08em] text-[#a5ab9c]">{label}</p>
               </div>
             ))}
           </div>
@@ -416,7 +447,7 @@ export function HomePage() {
               De zéro à un premier
               <br className="hidden sm:block" /> diagnostic en une minute.
             </h2>
-            <p className="mt-4 max-w-md text-[13px] leading-[1.75] text-muted">
+            <p className="mt-4 max-w-md text-[14px] leading-[1.75] text-muted">
               Pas de compte, pas de config, pas de service à lancer. Node 18.17+ et git 2.30+
               suffisent. Le mode lecture seule est actif par défaut.
             </p>
@@ -431,8 +462,8 @@ export function HomePage() {
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   <div>
-                    <p className="text-[13px] font-medium text-ink">{title}</p>
-                    <p className="mt-0.5 text-[12px] leading-relaxed text-muted">{text}</p>
+                    <p className="text-[14px] font-medium text-ink">{title}</p>
+                    <p className="mt-0.5 text-[13px] leading-relaxed text-muted">{text}</p>
                   </div>
                 </li>
               ))}
@@ -461,21 +492,21 @@ export function HomePage() {
                   aria-pressed={tab === item.id}
                   onClick={() => setTab(item.id)}
                   className={cn(
-                    "inline-flex items-center gap-2 rounded-lg border px-3 py-1.5 font-mono text-[10.5px] transition-colors",
+                    "inline-flex items-center gap-2 rounded-lg border px-3 py-1.5 font-mono text-[11.5px] transition-colors",
                     tab === item.id
-                      ? "border-ink bg-ink text-lime"
+                      ? "border-term bg-term text-on-terminal"
                       : "border-line bg-cream text-muted hover:border-line-strong hover:text-ink",
                   )}
                 >
                   {item.label}
-                  <span className={cn("hidden text-[8.5px] sm:inline", tab === item.id ? "text-lime/60" : "text-faint")}>
+                  <span className={cn("hidden text-[9.5px] sm:inline", tab === item.id ? "text-lime/70" : "text-faint")}>
                     {item.hint}
                   </span>
                 </button>
               ))}
             </div>
             <CodeBlock code={currentTab.code} title={`installation -" ${currentTab.label}`} lang="bash" />
-            <p className="flex items-start gap-2 font-mono text-[9.5px] leading-relaxed text-muted">
+            <p className="flex items-start gap-2 font-mono text-[10.5px] leading-relaxed text-muted">
               <Icon name="info" size={12} className="mt-0.5 shrink-0 text-lime-deep" />
               Les quatre binaires exposent --help et --version. Aucune installation n'est requise pour lire la documentation.
             </p>

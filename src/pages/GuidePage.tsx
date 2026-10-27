@@ -13,8 +13,8 @@ const shortcuts = [
   { label: "Installer la suite", href: "#/guide/demarrage", icon: "download" as const },
   { label: "Toutes les commandes", href: "#/guide/commandes", icon: "terminal" as const },
   { label: "Brancher la CI", href: "#/guide/ci", icon: "spark" as const },
-  { label: "Scurit & secrets", href: "#/guide/securite", icon: "shield" as const },
-  { label: "Dpannage", href: "#/guide/depannage", icon: "alert" as const },
+  { label: "Sécurité & secrets", href: "#/guide/securite", icon: "shield" as const },
+  { label: "Dépannage", href: "#/guide/depannage", icon: "alert" as const },
   { label: "Faire adopter", href: "#/guide/adoption", icon: "book" as const },
 ];
 
@@ -29,21 +29,21 @@ export function GuidePage({ route }: { route: Extract<Route, { name: "guide" }> 
   return (
     <div>
       <PageHeader
-        kicker="Guide d'utilisation  franais"
+        kicker="Guide d'utilisation · français"
         title={
           <>
             Le mode d'emploi complet.
             <br />
-            <span className="font-serif text-[1.05em] font-normal italic">De zro  la CI.</span>
+            <span className="font-serif text-[1.05em] font-normal italic">De zéro à la CI.</span>
           </>
         }
         intro={guideIntro}
         compact
         meta={[
-          { label: "Chapitres", value: "7 sections dtailles" },
+          { label: "Chapitres", value: "7 sections détaillées" },
           { label: "Temps de lecture", value: "~18 minutes" },
-          { label: "Niveau", value: "Junior -' plateforme" },
-          { label: "Prrequis", value: "Node 18.17+, git 2.30+" },
+          { label: "Niveau", value: "Junior à plateforme" },
+          { label: "Prérequis", value: "Node 18.17+, git 2.30+" },
         ]}
         actions={
           <>
@@ -61,14 +61,14 @@ export function GuidePage({ route }: { route: Extract<Route, { name: "guide" }> 
         }
         aside={
           <div className="w-full rounded-xl border border-line bg-cream p-4 lg:w-[260px]">
-            <p className="font-mono text-[8.5px] uppercase tracking-[0.14em] text-faint">Rgle d'or</p>
+            <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">Règle d'or</p>
             <p className="mt-2 font-display text-[14px] font-medium leading-snug text-ink">
               Lecture seule d'abord, criture explicite ensuite.
             </p>
-            <p className="mt-1.5 text-[11px] leading-relaxed text-muted">
+            <p className="mt-1.5 text-[12px] leading-relaxed text-muted">
               Tous les audits se lancent sans risque. Les options destructives portent un nom sans ambigut.
             </p>
-            <div className="mt-3 border-t border-line pt-2.5 font-mono text-[9px] leading-relaxed text-faint">
+            <div className="mt-3 border-t border-line pt-2.5 font-mono text-[10px] leading-relaxed text-faint">
               exit 0  OK<br />
               exit 1  erreur logique<br />
               exit 2  erreur technique
@@ -89,7 +89,7 @@ export function GuidePage({ route }: { route: Extract<Route, { name: "guide" }> 
               aria-current={active === section.id ? "true" : undefined}
               className={cn(
                 "inline-flex shrink-0 items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[10px] transition-colors",
-                active === section.id ? "bg-ink text-lime" : "text-muted hover:bg-paper-2 hover:text-ink",
+                active === section.id ? "bg-term text-lime" : "text-muted hover:bg-paper-2 hover:text-ink",
               )}
             >
               <span className={cn("text-[8px]", active === section.id ? "text-lime/70" : "text-faint")}>
@@ -113,11 +113,11 @@ export function GuidePage({ route }: { route: Extract<Route, { name: "guide" }> 
                 className="scroll-mt-[8.5rem] border-b border-line py-9 first:pt-8 last:border-b-0 sm:py-11"
               >
                 <div className="mb-4 flex items-start gap-3.5">
-                  <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-ink font-mono text-[11px] font-medium text-lime">
+                  <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-term font-mono text-[11px] font-medium text-lime">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   <div className="min-w-0">
-                    <p className="font-mono text-[8.5px] uppercase tracking-[0.15em] text-faint">{section.kicker}</p>
+                    <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-faint">{section.kicker}</p>
                     <h2
                       id={`${section.id}-title`}
                       className="mt-1 font-display text-[1.45rem] font-medium leading-tight tracking-[-0.03em] text-ink sm:text-[1.7rem]"
@@ -132,23 +132,23 @@ export function GuidePage({ route }: { route: Extract<Route, { name: "guide" }> 
               </section>
             ))}
 
-            <div className="my-10 overflow-hidden rounded-2xl bg-term p-5 text-cream sm:p-7">
-              <p className="font-mono text-[8.5px] uppercase tracking-[0.16em] text-lime">Prochaine tape</p>
+            <div className="my-10 overflow-hidden rounded-2xl bg-term p-5 text-on-terminal sm:p-7">
+              <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-lime">Prochaine étape</p>
               <h2 className="mt-2 max-w-md font-display text-[1.4rem] font-medium leading-tight tracking-[-0.025em] sm:text-[1.65rem]">
-                Le guide est lu. Place  votre premier audit.
+                Le guide est lu. Place à votre premier audit.
               </h2>
-              <p className="mt-2 max-w-lg text-[12.5px] leading-relaxed text-[#aab0a1]">
-                Lancez les quatre commandes en lecture seule sur un dpt existant, puis ajoutez
-                env-doctor et project-doctor  votre CI.
+              <p className="mt-2 max-w-lg text-[14px] leading-relaxed text-[#aab0a1]">
+                Lancez les quatre commandes en lecture seule sur un dépôt existant, puis ajoutez
+                env-doctor et project-doctor à votre CI.
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <a href="#/install" className="inline-flex items-center gap-2 rounded-lg bg-lime px-3.5 py-2 font-mono text-[10.5px] font-medium text-on-accent transition hover:bg-lime-bright">
                   Installation <Icon name="arrow-right" size={12} />
                 </a>
-                <a href="#/playground" className="inline-flex items-center gap-2 rounded-lg border border-white/20 px-3.5 py-2 font-mono text-[10.5px] text-cream transition hover:border-lime/50 hover:text-lime">
+                <a href="#/playground" className="inline-flex items-center gap-2 rounded-lg border border-white/20 px-3.5 py-2 font-mono text-[11px] text-on-terminal transition hover:border-lime/50 hover:text-lime">
                   Voir les sorties <Icon name="play" size={11} />
                 </a>
-                <a href="#/docs/env-doctor" className="inline-flex items-center gap-2 rounded-lg border border-white/20 px-3.5 py-2 font-mono text-[10.5px] text-cream transition hover:border-lime/50 hover:text-lime">
+                <a href="#/docs/env-doctor" className="inline-flex items-center gap-2 rounded-lg border border-white/20 px-3.5 py-2 font-mono text-[11px] text-on-terminal transition hover:border-lime/50 hover:text-lime">
                   Fiche env-doctor <Icon name="external" size={11} />
                 </a>
               </div>

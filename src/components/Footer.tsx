@@ -34,7 +34,7 @@ const columns = [
 export function Footer() {
   const content = useSiteContent();
   return (
-    <footer className="mt-20 bg-term text-cream sm:mt-28">
+    <footer className="mt-20 bg-term text-on-terminal sm:mt-28">
       <div className="mx-auto w-full max-w-[1240px] px-4 py-12 sm:px-6 sm:py-16">
         <div className="grid gap-10 lg:grid-cols-[1.3fr_2fr]">
           <div>
@@ -50,9 +50,6 @@ export function Footer() {
               <CopyButton value="devwell env --json" label="" />
             </div>
             <div className="mt-5 flex flex-wrap gap-2 font-mono text-[9.5px] text-[#9ba190]">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/12 px-2 py-1">
-                <span className="h-1.5 w-1.5 rounded-full bg-lime" /> v0.1.1 - stable
-              </span>
               <span className="inline-flex items-center gap-1.5 rounded-full border border-white/12 px-2 py-1">
                 <Icon name="shield" size={10} /> dry-run par défaut
               </span>
@@ -89,8 +86,8 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 font-mono text-[9.5px] text-[#7f8576] sm:flex-row sm:items-center sm:justify-between">
-          <p>© 2026 Devwell - Licence MIT - Aucune télémétrie</p>
+        <div className="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 font-mono text-[10.5px] text-[#7f8576] sm:flex-row sm:items-center sm:justify-between">
+          <p>© 2026 Devwell · Licence MIT · v0.1.1 stable · Aucune télémétrie</p>
           <p className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <span>Fait pour les commits conventionnels</span>
             <span className="text-[#4f5548]">/</span>

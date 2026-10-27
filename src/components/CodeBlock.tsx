@@ -37,23 +37,23 @@ export function CodeBlock({
           <span className="h-2 w-2 rounded-full bg-[#5c6249]" />
           <span className="h-2 w-2 rounded-full bg-lime/70" />
         </span>
-        <figcaption className="min-w-0 flex-1 truncate font-mono text-[10.5px] tracking-[0.02em] text-[#a3a898]">
+        <figcaption className="min-w-0 flex-1 truncate font-mono text-[11.5px] tracking-[0.02em] text-[#a3a898]">
           {title ?? (lang ? `exemple.${lang}` : "extrait")}
         </figcaption>
         {lang && (
-          <span className="hidden shrink-0 rounded border border-white/10 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.12em] text-[#8c9282] sm:inline">
+          <span className="hidden shrink-0 rounded border border-white/10 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-[#8c9282] sm:inline">
             {LANG_LABEL[lang] ?? lang}
           </span>
         )}
         <CopyButton value={code} label="Copier" />
       </div>
       <div className={cn("overflow-x-auto", dense ? "px-4 py-3" : "px-4 py-4 sm:px-5")}>
-        <pre className="whitespace-pre font-mono text-[12px] leading-[1.8] text-[#e5e4d8] sm:text-[12.5px]">
+        <pre className="whitespace-pre font-mono text-[13px] leading-[1.8] text-[#e5e4d8] sm:text-[13.5px]">
           <code>{code}</code>
         </pre>
       </div>
       {note && (
-        <p className="border-t border-term-line bg-white/[0.02] px-4 py-2 font-mono text-[10px] leading-relaxed text-[#8c9282]">
+        <p className="border-t border-term-line bg-white/[0.02] px-4 py-2 font-mono text-[11px] leading-relaxed text-[#8c9282]">
           — {note}
         </p>
       )}

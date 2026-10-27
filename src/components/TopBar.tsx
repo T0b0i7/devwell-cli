@@ -81,11 +81,6 @@ export function TopBar({
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
-          <span className="hidden items-center gap-1.5 rounded-full border border-line bg-cream px-2.5 py-1 font-mono text-[10px] text-muted md:inline-flex">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#77a74a]" />
-            v0.1.1
-          </span>
-
           <button
             type="button"
             onClick={onSearch}

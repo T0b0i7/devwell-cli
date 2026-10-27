@@ -136,7 +136,7 @@ function AppShell() {
           target?.focus({ preventScroll: true });
           target?.scrollIntoView({ behavior: "auto", block: "start" });
         }}
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[90] focus:rounded-lg focus:bg-ink focus:px-4 focus:py-2 focus:text-[12px] focus:text-lime"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[90] focus:rounded-lg focus:bg-term focus:px-4 focus:py-2 focus:text-[12px] focus:text-lime"
       >
         Aller au contenu principal
       </a>

@@ -3,5 +3,18 @@
   "framework": "vite",
   "installCommand": "npm ci",
   "buildCommand": "npm run build",
-  "outputDirectory": "dist"
+  "outputDirectory": "dist",
+  "functions": {
+    "api/playground/run.js": {
+      "maxDuration": 10,
+      "includeFiles": [
+        "packages/devwell/src/**",
+        "packages/readme-gen/src/**",
+        "packages/env-doctor/src/**",
+        "packages/project-doctor/src/**",
+        "packages/branch-cleaner/src/**",
+        "packages/core/src/**"
+      ]
+    }
+  }
 }
