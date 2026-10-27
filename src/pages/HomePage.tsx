@@ -45,7 +45,7 @@ function ToolCard({ tool }: { tool: ToolMeta }) {
       </a>
       <div className="relative z-[1] flex items-start justify-between">
         <span className={cn("inline-flex h-11 w-11 items-center justify-center rounded-xl border border-ink/10", accent.tile)}>
-          <Icon name={tool.icon} size={21} className="text-ink" />
+          <Icon name={tool.icon} size={21} className="text-on-accent" />
         </span>
         <div className="flex items-center gap-2">
           <span className="rounded-full border border-line bg-paper px-2 py-1 font-mono text-[9px] uppercase tracking-[0.1em] text-muted">
@@ -140,7 +140,7 @@ export function HomePage() {
           className="border-b border-lime-deep/20 bg-lime-soft px-4 py-3 text-ink"
         >
           <div className="mx-auto flex max-w-[1240px] flex-wrap items-center gap-x-3 gap-y-1.5 sm:px-2">
-            <span className="rounded-full bg-lime px-2 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wide">
+            <span className="rounded-full bg-lime px-2 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wide text-on-accent">
               Annonce
             </span>
             <strong className="text-[12px] font-semibold">{announcement.title}</strong>
@@ -169,7 +169,7 @@ export function HomePage() {
         <div className="relative mx-auto grid w-full max-w-[1240px] grid-cols-1 items-center gap-12 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-[1.02fr_1fr] lg:gap-14 lg:py-24">
           <div className="min-w-0 animate-rise">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-ink/10 bg-lime px-2.5 py-1 font-mono text-[9.5px] font-medium uppercase tracking-[0.08em] text-ink">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-ink/10 bg-lime px-2.5 py-1 font-mono text-[9.5px] font-medium uppercase tracking-[0.08em] text-on-accent">
                 <span className="h-1.5 w-1.5 rounded-full bg-ink" /> v0.1.1 · disponibilité publique
               </span>
               <span className="rounded-full border border-line bg-cream/80 px-2.5 py-1 font-mono text-[9.5px] tracking-[0.04em] text-muted">

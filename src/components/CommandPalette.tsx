@@ -155,7 +155,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
                     <span
                       className={cn(
                         "flex h-6 w-6 shrink-0 items-center justify-center rounded-md border",
-                        index === active ? "border-lime-deep/25 bg-lime text-lime-deep" : "border-line bg-cream text-muted",
+                        index === active ? "border-lime-deep/25 bg-lime text-on-accent" : "border-line bg-cream text-muted",
                       )}
                     >
                       <Icon name="file" size={12} />

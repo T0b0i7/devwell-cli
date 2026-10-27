@@ -20,12 +20,12 @@ function Inline({ text }: { text: string }) {
   );
 }
 
-const calloutStyles: Record<Tone, { wrap: string; icon: Parameters<typeof Icon>[0]["name"]; label: string }> = {
-  info: { wrap: "border-lime-deep/25 bg-lime-soft/70 text-ink", icon: "info", label: "text-lime-deep" },
-  warn: { wrap: "border-[#c99a3f]/35 bg-[#f6ecd5] text-ink", icon: "alert", label: "text-[#8a6418]" },
-  success: { wrap: "border-[#6b9a7d]/35 bg-[#e7f2e9] text-ink", icon: "check", label: "text-[#386347]" },
-  danger: { wrap: "border-[#c47369]/35 bg-[#f8e6e2] text-ink", icon: "alert", label: "text-[#8f3f36]" },
-  neutral: { wrap: "border-line bg-paper-2 text-ink", icon: "info", label: "text-muted" },
+const calloutStyles: Record<Tone, { wrap: string; icon: Parameters<typeof Icon>[0]["name"]; label: string; description: string }> = {
+  info: { wrap: "border-lime-deep/25 bg-lime-soft/70 text-ink", icon: "info", label: "text-lime-deep", description: "text-ink-soft" },
+  warn: { wrap: "border-[#c99a3f]/35 bg-[#f6ecd5] text-on-accent", icon: "alert", label: "text-[#8a6418]", description: "text-current" },
+  success: { wrap: "border-[#6b9a7d]/35 bg-[#e7f2e9] text-on-accent", icon: "check", label: "text-[#386347]", description: "text-current" },
+  danger: { wrap: "border-[#c47369]/35 bg-[#f8e6e2] text-on-accent", icon: "alert", label: "text-[#8f3f36]", description: "text-current" },
+  neutral: { wrap: "border-line bg-paper-2 text-ink", icon: "info", label: "text-muted", description: "text-ink-soft" },
 };
 
 function TableBlock({ headers, rows, caption }: Extract<Block, { type: "table" }>) {
@@ -132,7 +132,7 @@ export function Blocks({ blocks }: { blocks: Block[] }) {
                   <Icon name={style.icon} size={15} />
                   {block.title}
                 </p>
-                <p className="mt-1.5 text-[13px] leading-[1.7] text-ink-soft">
+                <p className={cn("mt-1.5 text-[13px] leading-[1.7]", style.description)}>
                   <Inline text={block.text} />
                 </p>
               </aside>
@@ -154,7 +154,7 @@ export function Blocks({ blocks }: { blocks: Block[] }) {
                         className={cn(
                           "mt-0.5 flex h-[17px] w-[17px] shrink-0 items-center justify-center rounded-[4px] border",
                           item.done
-                            ? "border-lime-deep/40 bg-lime text-lime-deep"
+                            ? "border-lime-deep/40 bg-lime text-on-accent"
                             : "border-line-strong bg-paper text-transparent",
                         )}
                         aria-hidden="true"

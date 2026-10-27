@@ -289,7 +289,7 @@ export function AdminPage() {
                 <p className="mt-2 max-w-2xl text-[13px] leading-relaxed text-muted">
                   Les changements sont sauvegardés dans le fichier de contenu du dépôt GitHub. Vercel reconstruit ensuite le site ; il peut falloir un court délai avant de voir les modifications publiques.
                 </p>
-                <button type="button" onClick={() => setSection("announcements")} className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-xl bg-lime px-4 text-[13px] font-semibold text-ink transition hover:bg-lime-bright">
+                <button type="button" onClick={() => setSection("announcements")} className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-xl bg-lime px-4 text-[13px] font-semibold text-on-accent transition hover:bg-lime-bright">
                   Gérer les annonces <Icon name="arrow-right" size={14} />
                 </button>
               </div>

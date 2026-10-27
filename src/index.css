@@ -22,6 +22,7 @@
   --color-lime-bright: #e6ff8a;
   --color-lime-soft: #eef6d2;
   --color-lime-deep: #4b5a1d;
+  --color-on-accent: #17180f;
   --color-term: #11130e;
   --color-term-2: #191c15;
   --color-term-line: #2e3327;
@@ -68,6 +69,7 @@ body {
   --color-lime-bright: #e6ff8a;
   --color-lime-soft: #2a3318;
   --color-lime-deep: #b8d95a;
+  --color-on-accent: #17180f;
   --color-term: #0a0c07;
   --color-term-2: #12150e;
   --color-term-line: #2a2e22;

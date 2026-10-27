@@ -142,7 +142,7 @@ export function GuidePage({ route }: { route: Extract<Route, { name: "guide" }> 
                 env-doctor et project-doctor  votre CI.
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
-                <a href="#/install" className="inline-flex items-center gap-2 rounded-lg bg-lime px-3.5 py-2 font-mono text-[10.5px] font-medium text-ink transition hover:bg-lime-bright">
+                <a href="#/install" className="inline-flex items-center gap-2 rounded-lg bg-lime px-3.5 py-2 font-mono text-[10.5px] font-medium text-on-accent transition hover:bg-lime-bright">
                   Installation <Icon name="arrow-right" size={12} />
                 </a>
                 <a href="#/playground" className="inline-flex items-center gap-2 rounded-lg border border-white/20 px-3.5 py-2 font-mono text-[10.5px] text-cream transition hover:border-lime/50 hover:text-lime">
